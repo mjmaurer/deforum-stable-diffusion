@@ -59,6 +59,7 @@ animation_prompts = {
     40: "a beautiful durian, trending on Artstation",
 }
 base = "/content"
+input_base = f"{base}/input"
 batch_name = "StableFun" #@param {type:"string"}
 setup_environment = True #@param {type:"boolean"}
 models_path = f"{base}/models" #@param {type:"string"}
@@ -120,11 +121,11 @@ def DeforumAnimArgs():
     save_depth_maps = False #@param {type:"boolean"}
 
     #@markdown ####**Video Input:**
-    video_init_path =f"{base}/video_in.mp4"#@param {type:"string"}
+    video_init_path =f"{input_base}/video_in.mp4"#@param {type:"string"}
     extract_nth_frame = 1#@param {type:"number"}
     overwrite_extracted_frames = True #@param {type:"boolean"}
     use_mask_video = False #@param {type:"boolean"}
-    video_mask_path =f"{base}/video_in.mp4"#@param {type:"string"}
+    video_mask_path =f"{input_base}/video_in.mp4"#@param {type:"string"}
 
     #@markdown ####**Interpolation:**
     interpolate_key_frames = False #@param {type:"boolean"}
@@ -1081,6 +1082,7 @@ def generate(args, frame = 0, return_latent=False, return_sample=False, return_c
 #@markdown **Select and Load Model**
 
 model_map = {
+    # https://www.reddit.com/r/StableDiffusion/comments/x5am4v/ema_model_vs_non_ema_differences/
     "sd-v1-4-full-ema.ckpt": {
         'sha256': '14749efc0ae8ef0329391ad4436feb781b402f4fece4883c7ad8d10556d8a36a',
         'url': 'https://huggingface.co/CompVis/stable-diffusion-v-1-2-original/blob/main/sd-v1-4-full-ema.ckpt',
