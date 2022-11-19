@@ -1,4 +1,29 @@
 import os
+import json
+from IPython import display
+
+import gc, math, os, pathlib, subprocess, sys, time
+import cv2
+import numpy as np
+import pandas as pd
+import random
+import requests
+import torch
+import torch.nn as nn
+import torchvision.transforms as T
+import torchvision.transforms.functional as TF
+from contextlib import contextmanager, nullcontext
+from einops import rearrange, repeat
+from omegaconf import OmegaConf
+from PIL import Image
+from pytorch_lightning import seed_everything
+from skimage.exposure import match_histograms
+from torchvision.utils import make_grid
+from tqdm import tqdm, trange
+from types import SimpleNamespace
+from torch import autocast
+import re
+from scipy.ndimage import gaussian_filter
 
 animation_prompts = {
     0: "a beautiful apple, trending on Artstation",
@@ -305,31 +330,6 @@ if setup_environment:
 # !!   "cellView": "form"
 # !! }}
 #@markdown **Python Definitions**
-import json
-from IPython import display
-
-import gc, math, os, pathlib, subprocess, sys, time
-import cv2
-import numpy as np
-import pandas as pd
-import random
-import requests
-import torch
-import torch.nn as nn
-import torchvision.transforms as T
-import torchvision.transforms.functional as TF
-from contextlib import contextmanager, nullcontext
-from einops import rearrange, repeat
-from omegaconf import OmegaConf
-from PIL import Image
-from pytorch_lightning import seed_everything
-from skimage.exposure import match_histograms
-from torchvision.utils import make_grid
-from tqdm import tqdm, trange
-from types import SimpleNamespace
-from torch import autocast
-import re
-from scipy.ndimage import gaussian_filter
 
 sys.path.extend([
     'src/taming-transformers',
