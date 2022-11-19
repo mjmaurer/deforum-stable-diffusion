@@ -151,8 +151,8 @@ def get_output_folder(output_path, batch_folder):
 def DeforumArgs():
     #@markdown **Image Settings**
     # !imp
-    W = 512 #@param
-    H = 512 #@param
+    W = 720 #@param
+    H = 576 #@param
     W, H = map(lambda x: x - x % 64, (W, H))  # resize to integer multiple of 64
 
     #@markdown **Sampling Settings**
