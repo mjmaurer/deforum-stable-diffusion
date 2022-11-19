@@ -63,10 +63,10 @@ animation_prompts = {
 }
 base = "/storage/deforumsd"
 input_base = f"{base}/input"
-batch_name = "StableFun" #@param {type:"string"}
+batch_name = video_file_name.split(".")[0] # "StableFun" #@param {type:"string"}
 setup_environment = True #@param {type:"boolean"}
 models_path = f"{base}/models" #@param {type:"string"}
-output_path = f"{base}/output" #@param {type:"string"}
+output_path = f"notebooks/outputs" #@param {type:"string"}
 
 model_config = "v1-inference.yaml" #@param ["custom","v1-inference.yaml"]
 # download form huggingface?
@@ -142,7 +142,7 @@ def DeforumAnimArgs():
 
 
 def get_output_folder(output_path, batch_folder):
-    out_path = os.path.join(output_path,time.strftime('%Y-%m'))
+    out_path = os.path.join(output_path,time.strftime('%m_%d__%H_%M'))
     if batch_folder != "":
         out_path = os.path.join(out_path, batch_folder)
     os.makedirs(out_path, exist_ok=True)
