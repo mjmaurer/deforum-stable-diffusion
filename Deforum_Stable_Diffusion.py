@@ -226,7 +226,7 @@ override_settings_with_file = False #@param {type:"boolean"}
 custom_settings_file = f"{base}/drive/MyDrive/Settings.txt"#@param {type:"string"}
 
 # !imp False for generating video from frames
-skip_video_for_run_all = True #@param {type: 'boolean'}
+skip_video_for_run_all = False #@param {type: 'boolean'}
 fps = 12 #@param {type:"number"}
 #@markdown **Manual Settings**
 use_manual_settings = False #@param {type:"boolean"}
