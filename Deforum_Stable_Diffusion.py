@@ -1,4 +1,7 @@
-if True:
+import os
+ENV = os.environ
+
+if not ENV.get("SKIP_SETUP", False):
     import subprocess, time
     print("Setting up environment...")
     start_time = time.time()
@@ -25,7 +28,6 @@ if True:
     end_time = time.time()
     print(f"Environment set up in {end_time-start_time:.0f} seconds")
 
-import os
 import json
 from IPython import display
 
