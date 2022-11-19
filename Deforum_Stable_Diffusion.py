@@ -1,8 +1,17 @@
+animation_prompts = {
+    0: "a beautiful apple, trending on Artstation",
+    20: "a beautiful banana, trending on Artstation",
+    30: "a beautiful coconut, trending on Artstation",
+    40: "a beautiful durian, trending on Artstation",
+}
+base = "/content"
+batch_name = "StableFun" #@param {type:"string"}
 setup_environment = True #@param {type:"boolean"}
-models_path = "/content/models" #@param {type:"string"}
-output_path = "/content/output" #@param {type:"string"}
+models_path = f"{base}/models" #@param {type:"string"}
+output_path = f"{base}/output" #@param {type:"string"}
 
 model_config = "v1-inference.yaml" #@param ["custom","v1-inference.yaml"]
+# download form huggingface?
 model_checkpoint =  "sd-v1-4.ckpt" #@param ["custom","sd-v1-4-full-ema.ckpt","sd-v1-4.ckpt","sd-v1-3-full-ema.ckpt","sd-v1-3.ckpt","sd-v1-2-full-ema.ckpt","sd-v1-2.ckpt","sd-v1-1-full-ema.ckpt","sd-v1-1.ckpt", "robo-diffusion-v1.ckpt","waifu-diffusion-v1-3.ckpt"]
 if model_checkpoint == "waifu-diffusion-v1-3.ckpt":
     model_checkpoint = "model-epoch05-float16.ckpt"
@@ -18,14 +27,16 @@ map_location = "cuda" #@param ["cpu", "cuda"]
 def DeforumAnimArgs():
 
     #@markdown ####**Animation:**
-    animation_mode = 'None' #@param ['None', '2D', '3D', 'Video Input', 'Interpolation'] {type:'string'}
+    animation_mode = 'Video Input' #@param ['None', '2D', '3D', 'Video Input', 'Interpolation'] {type:'string'}
     max_frames = 1000 #@param {type:"number"}
     border = 'replicate' #@param ['wrap', 'replicate'] {type:'string'}
 
     #@markdown ####**Motion Parameters:**
     angle = "0:(0)"#@param {type:"string"}
-    zoom = "0:(1.04)"#@param {type:"string"}
-    translation_x = "0:(10*sin(2*3.14*t/10))"#@param {type:"string"}
+    # !changed no zoom: zoom = "0:(1.04)"#@param {type:"string"}
+    zoom = "0:(1)"#@param {type:"string"}
+    # ! changed translation_x = "0:(10*sin(2*3.14*t/10))"#@param {type:"string"}
+    translation_x = "0:(0)"#@param {type:"string"}
     translation_y = "0:(0)"#@param {type:"string"}
     translation_z = "0:(10)"#@param {type:"string"}
     rotation_3d_x = "0:(0)"#@param {type:"string"}
@@ -55,11 +66,11 @@ def DeforumAnimArgs():
     save_depth_maps = False #@param {type:"boolean"}
 
     #@markdown ####**Video Input:**
-    video_init_path ='/content/video_in.mp4'#@param {type:"string"}
+    video_init_path =f"{base}/video_in.mp4"#@param {type:"string"}
     extract_nth_frame = 1#@param {type:"number"}
     overwrite_extracted_frames = True #@param {type:"boolean"}
     use_mask_video = False #@param {type:"boolean"}
-    video_mask_path ='/content/video_in.mp4'#@param {type:"string"}
+    video_mask_path =f"{base}/video_in.mp4"#@param {type:"string"}
 
     #@markdown ####**Interpolation:**
     interpolate_key_frames = False #@param {type:"boolean"}
@@ -72,6 +83,7 @@ def DeforumAnimArgs():
     return locals()
 def DeforumArgs():
     #@markdown **Image Settings**
+    # !imp
     W = 512 #@param
     H = 512 #@param
     W, H = map(lambda x: x - x % 64, (W, H))  # resize to integer multiple of 64
@@ -80,6 +92,7 @@ def DeforumArgs():
     seed = -1 #@param
     sampler = 'klms' #@param ["klms","dpm2","dpm2_ancestral","heun","euler","euler_ancestral","plms", "ddim"]
     steps = 50 #@param
+    # !imp higher scale means more of an image change? or maybe the other way around
     scale = 7 #@param
     ddim_eta = 0.0 #@param
     dynamic_threshold = None
@@ -99,15 +112,17 @@ def DeforumArgs():
 
     #@markdown **Batch Settings**
     n_batch = 1 #@param
-    batch_name = "StableFun" #@param {type:"string"}
     filename_format = "{timestring}_{index}_{prompt}.png" #@param ["{timestring}_{index}_{seed}.png","{timestring}_{index}_{prompt}.png"]
-    seed_behavior = "iter" #@param ["iter","fixed","random"]
+    # !imp fixed for more similar images frame to frame
+    seed_behavior = "fixed" #@param ["iter","fixed","random"]
     make_grid = False #@param {type:"boolean"}
     grid_rows = 2 #@param 
     outdir = get_output_folder(output_path, batch_name)
 
     #@markdown **Init Settings**
     use_init = False #@param {type:"boolean"}
+    # !imp strength of 1 means output frame is input frame. .1 will look nothing like it
+    # !forvid could ramp up strength for each frame
     strength = 0.0 #@param {type:"number"}
     strength_0_no_init = True # Set the strength to 0 automatically when no init image is used
     init_image = "https://cdn.pixabay.com/photo/2022/07/30/13/10/green-longhorn-beetle-7353749_1280.jpg" #@param {type:"string"}
@@ -141,14 +156,15 @@ args_dict = DeforumArgs()
 anim_args_dict = DeforumAnimArgs()
 
 override_settings_with_file = False #@param {type:"boolean"}
-custom_settings_file = "/content/drive/MyDrive/Settings.txt"#@param {type:"string"}
+custom_settings_file = f"{base}/drive/MyDrive/Settings.txt"#@param {type:"string"}
 
+# !imp False for generating video from frames
 skip_video_for_run_all = True #@param {type: 'boolean'}
 fps = 12 #@param {type:"number"}
 #@markdown **Manual Settings**
 use_manual_settings = False #@param {type:"boolean"}
-image_path = "/content/drive/MyDrive/AI/StableDiffusion/2022-09/20220903000939_%05d.png" #@param {type:"string"}
-mp4_path = "/content/drive/MyDrive/AI/StableDiffu'/content/drive/MyDrive/AI/StableDiffusion/2022-09/sion/2022-09/20220903000939.mp4" #@param {type:"string"}
+image_path = f"{base}/drive/MyDrive/AI/StableDiffusion/2022-09/20220903000939_%05d.png" #@param {type:"string"}
+mp4_path = f"{base}/drive/MyDrive/AI/StableDiffu'/content/drive/MyDrive/AI/StableDiffusion/2022-09/sion/2022-09/20220903000939.mp4" #@param {type:"string"}
 render_steps = True  #@param {type: 'boolean'}
 path_name_modifier = "x0_pred" #@param ["x0_pred","x"]
 
@@ -935,7 +951,8 @@ def generate(args, frame = 0, return_latent=False, return_sample=False, return_c
         mask = None
 
     assert not ( (args.use_mask and args.overlay_mask) and (args.init_sample is None and init_image is None)), "Need an init image when use_mask == True and overlay_mask == True"
-        
+
+    # !imp need to modulate strength before this point. generate() has 'frame' arg
     t_enc = int((1.0-args.strength) * args.steps)
 
     # Noise schedule for the k-diffusion samplers (used for masking)
@@ -1316,12 +1333,6 @@ prompts = [
     #"this prompt has weights if prompt weighting enabled:2 can also do negative:-2", # (see prompt_weighting)
 ]
 
-animation_prompts = {
-    0: "a beautiful apple, trending on Artstation",
-    20: "a beautiful banana, trending on Artstation",
-    30: "a beautiful coconut, trending on Artstation",
-    40: "a beautiful durian, trending on Artstation",
-}
 
 # %%
 # !! {"metadata":{
@@ -1426,7 +1437,7 @@ def render_image_batch(args):
             display.clear_output(wait=True)            
             display.display(grid_image)
 
-
+# Called once for video input
 def render_animation(args, anim_args):
     # animations use key framed prompts
     args.prompts = animation_prompts
@@ -1436,6 +1447,7 @@ def render_animation(args, anim_args):
 
     # resume animation
     start_frame = 0
+    # False by default
     if anim_args.resume_from_timestring:
         for tmp in os.listdir(args.outdir):
             if tmp.split("_")[0] == anim_args.resume_timestring:
@@ -1484,6 +1496,7 @@ def render_animation(args, anim_args):
     # resume animation
     prev_sample = None
     color_match_sample = None
+    # False by default
     if anim_args.resume_from_timestring:
         last_frame = start_frame-1
         if turbo_steps > 1:
