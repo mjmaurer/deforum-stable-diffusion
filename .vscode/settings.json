@@ -1,0 +1,20 @@
+{
+    "python.languageServer": "Pylance",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.analysis.indexing": true,
+    "python.analysis.extraPaths": [],
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.useLibraryCodeForTypes": true,
+    "python.linting.pylintArgs": [],
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": [
+        "--line-length=100",
+        "--experimental-string-processing"
+    ],
+    "python.sortImports.args": [
+        "--profile",
+        "black"
+    ],
+}
