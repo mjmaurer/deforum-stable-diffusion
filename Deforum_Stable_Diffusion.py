@@ -12,7 +12,7 @@ if not ENV.get("SKIP_SETUP", False):
         ['git', 'clone', 'https://github.com/deforum/stable-diffusion'],
         ['pip', 'install', '-e', 'git+https://github.com/CompVis/taming-transformers.git@master#egg=taming-transformers'],
         ['pip', 'install', '-e', 'git+https://github.com/openai/CLIP.git@main#egg=clip'],
-        ['pip', 'install', 'accelerate', 'ftfy', 'jsonmerge', 'matplotlib', 'resize-right', 'timm', 'torchdiffeq'],
+        ['pip', 'install', 'numexpr', 'accelerate', 'ftfy', 'jsonmerge', 'matplotlib', 'resize-right', 'timm', 'torchdiffeq'],
         ['git', 'clone', 'https://github.com/shariqfarooq123/AdaBins.git'],
         ['git', 'clone', 'https://github.com/isl-org/MiDaS.git'],
         ['git', 'clone', 'https://github.com/MSFTserver/pytorch3d-lite.git'],
@@ -66,7 +66,7 @@ input_base = f"{base}/input"
 batch_name = video_file_name.split(".")[0] # "StableFun" #@param {type:"string"}
 setup_environment = True #@param {type:"boolean"}
 models_path = f"{base}/models" #@param {type:"string"}
-output_path = f"notebooks/outputs" #@param {type:"string"}
+output_path = f"/notebooks/outputs" #@param {type:"string"}
 
 model_config = "v1-inference.yaml" #@param ["custom","v1-inference.yaml"]
 # download form huggingface?
