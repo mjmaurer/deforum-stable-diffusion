@@ -58,7 +58,7 @@ animation_prompts = {
     30: "a beautiful coconut, trending on Artstation",
     40: "a beautiful durian, trending on Artstation",
 }
-base = "/content"
+base = "/storage"
 input_base = f"{base}/input"
 batch_name = "StableFun" #@param {type:"string"}
 setup_environment = True #@param {type:"boolean"}
