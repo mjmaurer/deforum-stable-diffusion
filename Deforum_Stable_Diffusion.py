@@ -1,6 +1,7 @@
 import os
 ENV = os.environ
 
+video_file_name = ENV.get("VID_FILE", "NA")
 if not ENV.get("SKIP_SETUP", False):
     import subprocess, time
     print("Setting up environment...")
@@ -123,11 +124,11 @@ def DeforumAnimArgs():
     save_depth_maps = False #@param {type:"boolean"}
 
     #@markdown ####**Video Input:**
-    video_init_path =f"{input_base}/video_in.mp4"#@param {type:"string"}
+    video_init_path =f"{input_base}/{video_file_name}"#@param {type:"string"}
     extract_nth_frame = 1#@param {type:"number"}
     overwrite_extracted_frames = True #@param {type:"boolean"}
     use_mask_video = False #@param {type:"boolean"}
-    video_mask_path =f"{input_base}/video_in.mp4"#@param {type:"string"}
+    video_mask_path =f"{input_base}/{video_file_name}"#@param {type:"string"}
 
     #@markdown ####**Interpolation:**
     interpolate_key_frames = False #@param {type:"boolean"}
