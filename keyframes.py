@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Literal
 
 
@@ -15,17 +16,24 @@ class Keyframe:
         val: float,
         interpolation_mode: InterpolationMode,
         time_measure: KeyframeTimeUnit,
-        time: float,
+        beat: Decimal,
+        second: Decimal,
+        frame: int,
     ) -> None:
         """
         Args:
             val (float): _description_
             interpolation_mode (InterpolationMode): Describes the mode *after* this keyframe
-            beat (_type_, optional): _description_. Defaults to None.
-            second (_type_, optional): _description_. Defaults to None.
-            frame (_type_, optional): _description_. Defaults to None.
         """
-        pass
+        if time_measure == "frame" and not frame:
+            raise Exception("No frame specified")
+        if time_measure == "beat" and not beat:
+            raise Exception("No beat specified")
+        if time_measure == "second" and not second:
+            raise Exception("No second specified")
+        self.beat = beat
+        self.frame = frame
+        self.second = second
 
 
 class KeyframeFactory:
@@ -42,10 +50,8 @@ class Timeline:
         self.keyframes: list[Keyframe] = []
         self.scene: Scene = scene
 
-    def add_keyframe(self, beat) -> Keyframe:
-        keyframe = Keyframe()
+    def add_keyframe(self, keyframe: Keyframe) -> None:
         self.keyframes.append(keyframe)
-        return keyframe
 
     def get_val_at_frame(self, frame: int) -> float:
         return 0

@@ -151,8 +151,8 @@ def get_output_folder(output_path, batch_folder):
 def DeforumArgs():
     #@markdown **Image Settings**
     # !imp
-    W = 720 #@param
-    H = 576 #@param
+    W = 1280 #@param 720
+    H = 720 #@param 405
     W, H = map(lambda x: x - x % 64, (W, H))  # resize to integer multiple of 64
 
     #@markdown **Sampling Settings**
@@ -190,7 +190,7 @@ def DeforumArgs():
     use_init = False #@param {type:"boolean"}
     # !imp strength of 1 means output frame is input frame. .1 will look nothing like it
     # !forvid could ramp up strength for each frame
-    strength = 0.5 #@param {type:"number"}
+    strength = 0.8 #@param {type:"number"}
     strength_0_no_init = True # Set the strength to 0 automatically when no init image is used
     init_image = "https://cdn.pixabay.com/photo/2022/07/30/13/10/green-longhorn-beetle-7353749_1280.jpg" #@param {type:"string"}
     # Whiter areas of the mask are areas that change more
