@@ -1,3 +1,5 @@
+import os
+
 animation_prompts = {
     0: "a beautiful apple, trending on Artstation",
     20: "a beautiful banana, trending on Artstation",
@@ -255,7 +257,6 @@ force_remount = False
 #         print("...error mounting drive or with drive path variables")
 #         print("...reverting to default path variables")
 
-import os
 os.makedirs(models_path, exist_ok=True)
 os.makedirs(output_path, exist_ok=True)
 
