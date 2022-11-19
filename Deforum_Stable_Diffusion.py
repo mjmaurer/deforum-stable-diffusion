@@ -1,3 +1,159 @@
+setup_environment = True #@param {type:"boolean"}
+models_path = "/content/models" #@param {type:"string"}
+output_path = "/content/output" #@param {type:"string"}
+
+model_config = "v1-inference.yaml" #@param ["custom","v1-inference.yaml"]
+model_checkpoint =  "sd-v1-4.ckpt" #@param ["custom","sd-v1-4-full-ema.ckpt","sd-v1-4.ckpt","sd-v1-3-full-ema.ckpt","sd-v1-3.ckpt","sd-v1-2-full-ema.ckpt","sd-v1-2.ckpt","sd-v1-1-full-ema.ckpt","sd-v1-1.ckpt", "robo-diffusion-v1.ckpt","waifu-diffusion-v1-3.ckpt"]
+if model_checkpoint == "waifu-diffusion-v1-3.ckpt":
+    model_checkpoint = "model-epoch05-float16.ckpt"
+custom_config_path = "" #@param {type:"string"}
+custom_checkpoint_path = "" #@param {type:"string"}
+
+load_on_run_all = True #@param {type: 'boolean'}
+half_precision = True # check
+check_sha256 = True #@param {type:"boolean"}
+
+map_location = "cuda" #@param ["cpu", "cuda"]
+
+def DeforumAnimArgs():
+
+    #@markdown ####**Animation:**
+    animation_mode = 'None' #@param ['None', '2D', '3D', 'Video Input', 'Interpolation'] {type:'string'}
+    max_frames = 1000 #@param {type:"number"}
+    border = 'replicate' #@param ['wrap', 'replicate'] {type:'string'}
+
+    #@markdown ####**Motion Parameters:**
+    angle = "0:(0)"#@param {type:"string"}
+    zoom = "0:(1.04)"#@param {type:"string"}
+    translation_x = "0:(10*sin(2*3.14*t/10))"#@param {type:"string"}
+    translation_y = "0:(0)"#@param {type:"string"}
+    translation_z = "0:(10)"#@param {type:"string"}
+    rotation_3d_x = "0:(0)"#@param {type:"string"}
+    rotation_3d_y = "0:(0)"#@param {type:"string"}
+    rotation_3d_z = "0:(0)"#@param {type:"string"}
+    flip_2d_perspective = False #@param {type:"boolean"}
+    perspective_flip_theta = "0:(0)"#@param {type:"string"}
+    perspective_flip_phi = "0:(t%15)"#@param {type:"string"}
+    perspective_flip_gamma = "0:(0)"#@param {type:"string"}
+    perspective_flip_fv = "0:(53)"#@param {type:"string"}
+    noise_schedule = "0: (0.02)"#@param {type:"string"}
+    strength_schedule = "0: (0.65)"#@param {type:"string"}
+    contrast_schedule = "0: (1.0)"#@param {type:"string"}
+
+    #@markdown ####**Coherence:**
+    color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
+    diffusion_cadence = '1' #@param ['1','2','3','4','5','6','7','8'] {type:'string'}
+
+    #@markdown ####**3D Depth Warping:**
+    use_depth_warping = True #@param {type:"boolean"}
+    midas_weight = 0.3#@param {type:"number"}
+    near_plane = 200
+    far_plane = 10000
+    fov = 40#@param {type:"number"}
+    padding_mode = 'border'#@param ['border', 'reflection', 'zeros'] {type:'string'}
+    sampling_mode = 'bicubic'#@param ['bicubic', 'bilinear', 'nearest'] {type:'string'}
+    save_depth_maps = False #@param {type:"boolean"}
+
+    #@markdown ####**Video Input:**
+    video_init_path ='/content/video_in.mp4'#@param {type:"string"}
+    extract_nth_frame = 1#@param {type:"number"}
+    overwrite_extracted_frames = True #@param {type:"boolean"}
+    use_mask_video = False #@param {type:"boolean"}
+    video_mask_path ='/content/video_in.mp4'#@param {type:"string"}
+
+    #@markdown ####**Interpolation:**
+    interpolate_key_frames = False #@param {type:"boolean"}
+    interpolate_x_frames = 4 #@param {type:"number"}
+    
+    #@markdown ####**Resume Animation:**
+    resume_from_timestring = False #@param {type:"boolean"}
+    resume_timestring = "20220829210106" #@param {type:"string"}
+
+    return locals()
+def DeforumArgs():
+    #@markdown **Image Settings**
+    W = 512 #@param
+    H = 512 #@param
+    W, H = map(lambda x: x - x % 64, (W, H))  # resize to integer multiple of 64
+
+    #@markdown **Sampling Settings**
+    seed = -1 #@param
+    sampler = 'klms' #@param ["klms","dpm2","dpm2_ancestral","heun","euler","euler_ancestral","plms", "ddim"]
+    steps = 50 #@param
+    scale = 7 #@param
+    ddim_eta = 0.0 #@param
+    dynamic_threshold = None
+    static_threshold = None   
+
+    #@markdown **Save & Display Settings**
+    save_samples = True #@param {type:"boolean"}
+    save_settings = True #@param {type:"boolean"}
+    display_samples = True #@param {type:"boolean"}
+    save_sample_per_step = False #@param {type:"boolean"}
+    show_sample_per_step = False #@param {type:"boolean"}
+
+    #@markdown **Prompt Settings**
+    prompt_weighting = False #@param {type:"boolean"}
+    normalize_prompt_weights = True #@param {type:"boolean"}
+    log_weighted_subprompts = False #@param {type:"boolean"}
+
+    #@markdown **Batch Settings**
+    n_batch = 1 #@param
+    batch_name = "StableFun" #@param {type:"string"}
+    filename_format = "{timestring}_{index}_{prompt}.png" #@param ["{timestring}_{index}_{seed}.png","{timestring}_{index}_{prompt}.png"]
+    seed_behavior = "iter" #@param ["iter","fixed","random"]
+    make_grid = False #@param {type:"boolean"}
+    grid_rows = 2 #@param 
+    outdir = get_output_folder(output_path, batch_name)
+
+    #@markdown **Init Settings**
+    use_init = False #@param {type:"boolean"}
+    strength = 0.0 #@param {type:"number"}
+    strength_0_no_init = True # Set the strength to 0 automatically when no init image is used
+    init_image = "https://cdn.pixabay.com/photo/2022/07/30/13/10/green-longhorn-beetle-7353749_1280.jpg" #@param {type:"string"}
+    # Whiter areas of the mask are areas that change more
+    use_mask = False #@param {type:"boolean"}
+    use_alpha_as_mask = False # use the alpha channel of the init image as the mask
+    mask_file = "https://www.filterforge.com/wiki/images/archive/b/b7/20080927223728%21Polygonal_gradient_thumb.jpg" #@param {type:"string"}
+    invert_mask = False #@param {type:"boolean"}
+    # Adjust mask image, 1.0 is no adjustment. Should be positive numbers.
+    mask_brightness_adjust = 1.0  #@param {type:"number"}
+    mask_contrast_adjust = 1.0  #@param {type:"number"}
+    # Overlay the masked image at the end of the generation so it does not get degraded by encoding and decoding
+    overlay_mask = True  # {type:"boolean"}
+    # Blur edges of final overlay mask, if used. Minimum = 0 (no blur)
+    mask_overlay_blur = 5 # {type:"number"}
+
+    n_samples = 1 # doesnt do anything
+    precision = 'autocast' 
+    C = 4
+    f = 8
+
+    prompt = ""
+    timestring = ""
+    init_latent = None
+    init_sample = None
+    init_c = None
+
+    return locals()
+
+args_dict = DeforumArgs()
+anim_args_dict = DeforumAnimArgs()
+
+override_settings_with_file = False #@param {type:"boolean"}
+custom_settings_file = "/content/drive/MyDrive/Settings.txt"#@param {type:"string"}
+
+skip_video_for_run_all = True #@param {type: 'boolean'}
+fps = 12 #@param {type:"number"}
+#@markdown **Manual Settings**
+use_manual_settings = False #@param {type:"boolean"}
+image_path = "/content/drive/MyDrive/AI/StableDiffusion/2022-09/20220903000939_%05d.png" #@param {type:"string"}
+mp4_path = "/content/drive/MyDrive/AI/StableDiffu'/content/drive/MyDrive/AI/StableDiffusion/2022-09/sion/2022-09/20220903000939.mp4" #@param {type:"string"}
+render_steps = True  #@param {type: 'boolean'}
+path_name_modifier = "x0_pred" #@param ["x0_pred","x"]
+
+manual_max_frames_1 = "200"
+
 # %%
 # !! {"metadata":{
 # !!   "id": "c442uQJ_gUgy"
@@ -57,25 +213,22 @@ print(sub_p_res)
 # ask for the link
 print("Local Path Variables:\n")
 
-models_path = "/content/models" #@param {type:"string"}
-output_path = "/content/output" #@param {type:"string"}
-
 #@markdown **Google Drive Path Variables (Optional)**
-mount_google_drive = True #@param {type:"boolean"}
+mount_google_drive = True #@aram {type:"boolean"}
 force_remount = False
 
-if mount_google_drive:
-    from google.colab import drive # type: ignore
-    try:
-        drive_path = "/content/drive"
-        drive.mount(drive_path,force_remount=force_remount)
-        models_path_gdrive = "/content/drive/MyDrive/AI/models" #@param {type:"string"}
-        output_path_gdrive = "/content/drive/MyDrive/AI/StableDiffusion" #@param {type:"string"}
-        models_path = models_path_gdrive
-        output_path = output_path_gdrive
-    except:
-        print("...error mounting drive or with drive path variables")
-        print("...reverting to default path variables")
+# if mount_google_drive:
+#     from google.colab import drive # type: ignore
+#     try:
+#         drive_path = "/content/drive"
+#         drive.mount(drive_path,force_remount=force_remount)
+#         models_path_gdrive = "/content/drive/MyDrive/AI/models" #@param {type:"string"}
+#         output_path_gdrive = "/content/drive/MyDrive/AI/StableDiffusion" #@param {type:"string"}
+#         models_path = models_path_gdrive
+#         output_path = output_path_gdrive
+#     except:
+#         print("...error mounting drive or with drive path variables")
+#         print("...reverting to default path variables")
 
 import os
 os.makedirs(models_path, exist_ok=True)
@@ -91,8 +244,7 @@ print(f"output_path: {output_path}")
 # !! }}
 #@markdown **Setup Environment**
 
-setup_environment = True #@param {type:"boolean"}
-print_subprocess = False #@param {type:"boolean"}
+print_subprocess = True #@aram {type:"boolean"}
 
 if setup_environment:
     import subprocess, time
@@ -907,17 +1059,6 @@ def generate(args, frame = 0, return_latent=False, return_sample=False, return_c
 # !! }}
 #@markdown **Select and Load Model**
 
-model_config = "v1-inference.yaml" #@param ["custom","v1-inference.yaml"]
-model_checkpoint =  "sd-v1-4.ckpt" #@param ["custom","sd-v1-4-full-ema.ckpt","sd-v1-4.ckpt","sd-v1-3-full-ema.ckpt","sd-v1-3.ckpt","sd-v1-2-full-ema.ckpt","sd-v1-2.ckpt","sd-v1-1-full-ema.ckpt","sd-v1-1.ckpt", "robo-diffusion-v1.ckpt","waifu-diffusion-v1-3.ckpt"]
-if model_checkpoint == "waifu-diffusion-v1-3.ckpt":
-    model_checkpoint = "model-epoch05-float16.ckpt"
-custom_config_path = "" #@param {type:"string"}
-custom_checkpoint_path = "" #@param {type:"string"}
-
-load_on_run_all = True #@param {type: 'boolean'}
-half_precision = True # check
-check_sha256 = True #@param {type:"boolean"}
-
 model_map = {
     "sd-v1-4-full-ema.ckpt": {
         'sha256': '14749efc0ae8ef0329391ad4436feb781b402f4fece4883c7ad8d10556d8a36a',
@@ -1036,7 +1177,6 @@ if ckpt_valid:
     print(f"Using ckpt: {ckpt_path}")
 
 def load_model_from_config(config, ckpt, verbose=False, device='cuda', half_precision=True):
-    map_location = "cuda" #@param ["cpu", "cuda"]
     print(f"Loading model from {ckpt}")
     pl_sd = torch.load(ckpt, map_location=map_location)
     if "global_step" in pl_sd:
@@ -1086,61 +1226,6 @@ if load_on_run_all and ckpt_valid:
 # !!   "id": "8HJN2TE3vh-J"
 # !! }}
 
-def DeforumAnimArgs():
-
-    #@markdown ####**Animation:**
-    animation_mode = 'None' #@param ['None', '2D', '3D', 'Video Input', 'Interpolation'] {type:'string'}
-    max_frames = 1000 #@param {type:"number"}
-    border = 'replicate' #@param ['wrap', 'replicate'] {type:'string'}
-
-    #@markdown ####**Motion Parameters:**
-    angle = "0:(0)"#@param {type:"string"}
-    zoom = "0:(1.04)"#@param {type:"string"}
-    translation_x = "0:(10*sin(2*3.14*t/10))"#@param {type:"string"}
-    translation_y = "0:(0)"#@param {type:"string"}
-    translation_z = "0:(10)"#@param {type:"string"}
-    rotation_3d_x = "0:(0)"#@param {type:"string"}
-    rotation_3d_y = "0:(0)"#@param {type:"string"}
-    rotation_3d_z = "0:(0)"#@param {type:"string"}
-    flip_2d_perspective = False #@param {type:"boolean"}
-    perspective_flip_theta = "0:(0)"#@param {type:"string"}
-    perspective_flip_phi = "0:(t%15)"#@param {type:"string"}
-    perspective_flip_gamma = "0:(0)"#@param {type:"string"}
-    perspective_flip_fv = "0:(53)"#@param {type:"string"}
-    noise_schedule = "0: (0.02)"#@param {type:"string"}
-    strength_schedule = "0: (0.65)"#@param {type:"string"}
-    contrast_schedule = "0: (1.0)"#@param {type:"string"}
-
-    #@markdown ####**Coherence:**
-    color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
-    diffusion_cadence = '1' #@param ['1','2','3','4','5','6','7','8'] {type:'string'}
-
-    #@markdown ####**3D Depth Warping:**
-    use_depth_warping = True #@param {type:"boolean"}
-    midas_weight = 0.3#@param {type:"number"}
-    near_plane = 200
-    far_plane = 10000
-    fov = 40#@param {type:"number"}
-    padding_mode = 'border'#@param ['border', 'reflection', 'zeros'] {type:'string'}
-    sampling_mode = 'bicubic'#@param ['bicubic', 'bilinear', 'nearest'] {type:'string'}
-    save_depth_maps = False #@param {type:"boolean"}
-
-    #@markdown ####**Video Input:**
-    video_init_path ='/content/video_in.mp4'#@param {type:"string"}
-    extract_nth_frame = 1#@param {type:"number"}
-    overwrite_extracted_frames = True #@param {type:"boolean"}
-    use_mask_video = False #@param {type:"boolean"}
-    video_mask_path ='/content/video_in.mp4'#@param {type:"string"}
-
-    #@markdown ####**Interpolation:**
-    interpolate_key_frames = False #@param {type:"boolean"}
-    interpolate_x_frames = 4 #@param {type:"number"}
-    
-    #@markdown ####**Resume Animation:**
-    resume_from_timestring = False #@param {type:"boolean"}
-    resume_timestring = "20220829210106" #@param {type:"string"}
-
-    return locals()
 
 class DeformAnimKeys():
     def __init__(self, anim_args):
@@ -1252,75 +1337,7 @@ animation_prompts = {
 # !!   "cellView": "form"
 # !! }}
 #@markdown **Load Settings**
-override_settings_with_file = False #@param {type:"boolean"}
-custom_settings_file = "/content/drive/MyDrive/Settings.txt"#@param {type:"string"}
 
-def DeforumArgs():
-    #@markdown **Image Settings**
-    W = 512 #@param
-    H = 512 #@param
-    W, H = map(lambda x: x - x % 64, (W, H))  # resize to integer multiple of 64
-
-    #@markdown **Sampling Settings**
-    seed = -1 #@param
-    sampler = 'klms' #@param ["klms","dpm2","dpm2_ancestral","heun","euler","euler_ancestral","plms", "ddim"]
-    steps = 50 #@param
-    scale = 7 #@param
-    ddim_eta = 0.0 #@param
-    dynamic_threshold = None
-    static_threshold = None   
-
-    #@markdown **Save & Display Settings**
-    save_samples = True #@param {type:"boolean"}
-    save_settings = True #@param {type:"boolean"}
-    display_samples = True #@param {type:"boolean"}
-    save_sample_per_step = False #@param {type:"boolean"}
-    show_sample_per_step = False #@param {type:"boolean"}
-
-    #@markdown **Prompt Settings**
-    prompt_weighting = False #@param {type:"boolean"}
-    normalize_prompt_weights = True #@param {type:"boolean"}
-    log_weighted_subprompts = False #@param {type:"boolean"}
-
-    #@markdown **Batch Settings**
-    n_batch = 1 #@param
-    batch_name = "StableFun" #@param {type:"string"}
-    filename_format = "{timestring}_{index}_{prompt}.png" #@param ["{timestring}_{index}_{seed}.png","{timestring}_{index}_{prompt}.png"]
-    seed_behavior = "iter" #@param ["iter","fixed","random"]
-    make_grid = False #@param {type:"boolean"}
-    grid_rows = 2 #@param 
-    outdir = get_output_folder(output_path, batch_name)
-
-    #@markdown **Init Settings**
-    use_init = False #@param {type:"boolean"}
-    strength = 0.0 #@param {type:"number"}
-    strength_0_no_init = True # Set the strength to 0 automatically when no init image is used
-    init_image = "https://cdn.pixabay.com/photo/2022/07/30/13/10/green-longhorn-beetle-7353749_1280.jpg" #@param {type:"string"}
-    # Whiter areas of the mask are areas that change more
-    use_mask = False #@param {type:"boolean"}
-    use_alpha_as_mask = False # use the alpha channel of the init image as the mask
-    mask_file = "https://www.filterforge.com/wiki/images/archive/b/b7/20080927223728%21Polygonal_gradient_thumb.jpg" #@param {type:"string"}
-    invert_mask = False #@param {type:"boolean"}
-    # Adjust mask image, 1.0 is no adjustment. Should be positive numbers.
-    mask_brightness_adjust = 1.0  #@param {type:"number"}
-    mask_contrast_adjust = 1.0  #@param {type:"number"}
-    # Overlay the masked image at the end of the generation so it does not get degraded by encoding and decoding
-    overlay_mask = True  # {type:"boolean"}
-    # Blur edges of final overlay mask, if used. Minimum = 0 (no blur)
-    mask_overlay_blur = 5 # {type:"number"}
-
-    n_samples = 1 # doesnt do anything
-    precision = 'autocast' 
-    C = 4
-    f = 8
-
-    prompt = ""
-    timestring = ""
-    init_latent = None
-    init_sample = None
-    init_c = None
-
-    return locals()
 
 
 
@@ -1749,9 +1766,6 @@ def render_interpolation(args, anim_args):
     args.init_c = None
 
 
-args_dict = DeforumArgs()
-anim_args_dict = DeforumAnimArgs()
-
 if override_settings_with_file:
     print(f"reading custom settings from {custom_settings_file}")
     if not os.path.isfile(custom_settings_file):
@@ -1821,15 +1835,6 @@ else:
 # !!   "cellView": "form",
 # !!   "id": "no2jP8HTMBM0"
 # !! }}
-skip_video_for_run_all = True #@param {type: 'boolean'}
-fps = 12 #@param {type:"number"}
-#@markdown **Manual Settings**
-use_manual_settings = False #@param {type:"boolean"}
-image_path = "/content/drive/MyDrive/AI/StableDiffusion/2022-09/20220903000939_%05d.png" #@param {type:"string"}
-mp4_path = "/content/drive/MyDrive/AI/StableDiffu'/content/drive/MyDrive/AI/StableDiffusion/2022-09/sion/2022-09/20220903000939.mp4" #@param {type:"string"}
-render_steps = True  #@param {type: 'boolean'}
-path_name_modifier = "x0_pred" #@param ["x0_pred","x"]
-
 
 if skip_video_for_run_all == True:
     print('Skipping video creation, uncheck skip_video_for_run_all if you want to run it')
@@ -1841,7 +1846,7 @@ else:
     print(f"{image_path} -> {mp4_path}")
 
     if use_manual_settings:
-        max_frames = "200" #@param {type:"string"}
+        max_frames = manual_max_frames_1  #@param {type:"string"}
     else:
         if render_steps: # render steps from a single image
             fname = f"{path_name_modifier}_%05d.png"
