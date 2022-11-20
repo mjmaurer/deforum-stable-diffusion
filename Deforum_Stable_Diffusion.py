@@ -4,7 +4,7 @@ from keyframes import Keyframe, Scene
 ENV = os.environ
 
 vid_strength = float(ENV.get("STRENGTH", 1))
-video_file_name = ENV.get("VID_FILE", "freesuburb.mp4")
+video_file_name = ENV.get("VID_FILE", "costa.mp4")
 vid_prompt = ENV.get("VID_PROMPT", "sad bipedal bears walking in a dark psychedelic green forest, steampunk")
 enhanced_vid_mode = ENV.get("VID_MODE_OFF", True)
 # Set to overwrite video inputframes if they already exist
@@ -155,7 +155,9 @@ def DeforumAnimArgs():
 
 
 def get_output_folder(viddir):
-    out_path = os.path.join(viddir,time.strftime('%m_%d__%H_%M'))
+    lst = os.listdir(viddir)
+    num_dirs = len(lst)
+    out_path = os.path.join(viddir,time.strftime(f"_{num_dirs}_%m_%d__%H_%M"))
     # if batch_folder != "":
     #     out_path = os.path.join(out_path, batch_folder)
     os.makedirs(out_path, exist_ok=True)
