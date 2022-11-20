@@ -115,9 +115,9 @@ def DeforumAnimArgs():
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
     noise_schedule = "0: (0.02)"#@param {type:"string"}
-    strength_schedule = "0: (1.0), 100: (0.7), 200: (0.6), 300: (0.5)"#@param {type:"string"}
+    strength_schedule = "0: (1.0), 200: (0.7), 400: (0.6), 800: (0.5)"#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
-    blend_schedule = "0: (1), 80: (0.9), 160: (0.7), 240: (0.4)"#@param {type:"string"}
+    blend_schedule = "0: (1), 160: (0.9), 320: (0.7), 500: (0.3)"#@param {type:"string"}
 
     #@markdown ####**Coherence:**
     color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
