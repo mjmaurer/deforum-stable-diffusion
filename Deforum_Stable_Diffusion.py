@@ -2,6 +2,8 @@ import os
 ENV = os.environ
 
 video_file_name = ENV.get("VID_FILE", "NA")
+# Set to overwrite video inputframes if they already exist
+rewrite_video_frames = ENV.get("REWRITE_VIDEO_FRAMES", False)
 if not ENV.get("SKIP_SETUP", False):
     import subprocess, time
     print("Setting up environment...")
@@ -141,8 +143,8 @@ def DeforumAnimArgs():
     return locals()
 
 
-def get_output_folder(output_path, batch_folder):
-    out_path = os.path.join(output_path,batch_name,time.strftime('%m_%d__%H_%M'))
+def get_output_folder(viddir):
+    out_path = os.path.join(viddir,time.strftime('%m_%d__%H_%M'))
     # if batch_folder != "":
     #     out_path = os.path.join(out_path, batch_folder)
     os.makedirs(out_path, exist_ok=True)
@@ -184,7 +186,8 @@ def DeforumArgs():
     seed_behavior = "fixed" #@param ["iter","fixed","random"]
     make_grid = False #@param {type:"boolean"}
     grid_rows = 2 #@param 
-    outdir = get_output_folder(output_path, batch_name)
+    viddir = os.path.join(output_path,batch_name)
+    outdir = get_output_folder(viddir)
 
     #@markdown **Init Settings**
     use_init = False #@param {type:"boolean"}
@@ -1606,8 +1609,9 @@ def render_animation(args, anim_args):
             print(f"Rx: {keys.rotation_3d_x_series[frame_idx]} Ry: {keys.rotation_3d_y_series[frame_idx]} Rz: {keys.rotation_3d_z_series[frame_idx]}")
 
         # grab init image for current frame
+        # TODO move input frames into vid dir and try and cache
         if using_vid_init:
-            init_frame = os.path.join(args.outdir, 'inputframes', f"{frame_idx+1:05}.jpg")            
+            init_frame = os.path.join(args.viddir, 'inputframes', f"{frame_idx+1:05}.jpg")            
             print(f"Using video init frame {init_frame}")
             args.init_image = init_frame
             if anim_args.use_mask_video:
@@ -1640,7 +1644,7 @@ def render_animation(args, anim_args):
 def vid2frames(video_path, frames_path, n=1, overwrite=True):      
     if not os.path.exists(frames_path) or overwrite: 
       try:
-          for f in pathlib.Path(video_in_frame_path).glob('*.jpg'):
+          for f in pathlib.Path(frames_path).glob('*.jpg'):
               f.unlink()
       except:
           pass
@@ -1662,12 +1666,13 @@ def vid2frames(video_path, frames_path, n=1, overwrite=True):
 
 def render_input_video(args, anim_args):
     # create a folder for the video input frames to live in
-    video_in_frame_path = os.path.join(args.outdir, 'inputframes') 
-    os.makedirs(video_in_frame_path, exist_ok=True)
+    video_in_frame_path = os.path.join(args.viddir, 'inputframes') 
     
     # save the video frames from input video
-    print(f"Exporting Video Frames (1 every {anim_args.extract_nth_frame}) frames to {video_in_frame_path}...")
-    vid2frames(anim_args.video_init_path, video_in_frame_path, anim_args.extract_nth_frame, anim_args.overwrite_extracted_frames)
+    if not os.path.exists(video_in_frame_path) or rewrite_video_frames:
+        os.makedirs(video_in_frame_path, exist_ok=True)
+        print(f"Exporting Video Frames (1 every {anim_args.extract_nth_frame}) frames to {video_in_frame_path}...")
+        vid2frames(anim_args.video_init_path, video_in_frame_path, anim_args.extract_nth_frame, anim_args.overwrite_extracted_frames)
 
     # determine max frames from length of input frames
     anim_args.max_frames = len([f for f in pathlib.Path(video_in_frame_path).glob('*.jpg')])
