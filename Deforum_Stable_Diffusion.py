@@ -117,8 +117,8 @@ def DeforumAnimArgs():
     angle = "0:(4), 100: (5), 500: (5)"#@param {type:"string"}
     # strength_schedule = "0: (1.0), 70: (1.0), 200: (0.65), 400: (0.6), 500: (0.5)"#@param {type:"string"}
     # blend_schedule = "0: (1), 200: (1), 320: (0.6), 500: (0.1)"#@param {type:"string"}
-    strength_schedule = "0: (0.7), 200: (0.5), 500: (0.5)"#@param {type:"string"}
-    blend_schedule = "0: (0.8), 100: (0.8), 200: (0.5), 320: (0.6), 500: (0.1)"#@param {type:"string"}
+    strength_schedule = "0: (0.5), 200: (0.5), 500: (0.5)"#@param {type:"string"}
+    blend_schedule = "0: (1), 100: (1), 200: (0.5), 320: (0.6), 500: (0.1)"#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
     seed_iter_frame = 200
 
