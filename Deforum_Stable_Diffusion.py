@@ -4,8 +4,8 @@ from keyframes import Keyframe, Scene
 ENV = os.environ
 
 vid_strength = float(ENV.get("STRENGTH", 1))
-video_file_name = ENV.get("VID_FILE", "20testzoom.mp4")
-vid_prompt = ENV.get("VID_PROMPT", "psychedelic organic network of branches in fall foilage, high detail, leaves and rocks, trippy, abstract")
+video_file_name = ENV.get("VID_FILE", "19testvid.mp4")
+vid_prompt = ENV.get("VID_PROMPT", "a network of tree branches in fall foilage, high detail, leaves and rocks, trippy,  abstract")
 enhanced_vid_mode = ENV.get("VID_MODE_OFF", True)
 # Set to overwrite video inputframes if they already exist
 rewrite_video_frames = ENV.get("REWRITE_VIDEO_FRAMES", False)
@@ -122,7 +122,7 @@ def DeforumAnimArgs():
     blend_build = 10 # 100
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.01)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 1}:(0), {switch_frame}:(1)" #@param {type:"string"}
-    strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame - 1}: (0.65), {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
+    strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame - 1}: (0.65), {switch_frame}: (0.9), {switch_frame + 200}: (0.55)" #@param {type:"string"}
     blend_schedule = f"0: (1), {switch_frame - blend_build}: (1), {switch_frame - 1}: (0.95), {switch_frame}: (0) "#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
     seed_iter_frame = switch_frame - 1
