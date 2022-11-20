@@ -4,8 +4,8 @@ from keyframes import Keyframe, Scene
 ENV = os.environ
 
 vid_strength = float(ENV.get("STRENGTH", 1))
-video_file_name = ENV.get("VID_FILE", "NA")
-vid_prompt = ENV.get("VID_PROMPT", "a sad bear in a forest, by victo ngai, kilian eng vibrant colors, dynamic lighting")
+video_file_name = ENV.get("VID_FILE", "freesuburb.mp4")
+vid_prompt = ENV.get("VID_PROMPT", "sad bipedal bears walking in a dark psychedelic forest")
 enhanced_vid_mode = ENV.get("VID_MODE_OFF", True)
 # Set to overwrite video inputframes if they already exist
 rewrite_video_frames = ENV.get("REWRITE_VIDEO_FRAMES", False)
