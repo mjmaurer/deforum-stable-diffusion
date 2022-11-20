@@ -114,7 +114,9 @@ def DeforumAnimArgs():
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
     noise_schedule = "0: (0), 200: (0), 500: (0.02)"#@param {type:"string"}
-    angle = "0:(0), 200: (0), 500: (5)"#@param {type:"string"}
+    angle = "0:(0), 200: (1), 500: (5)"#@param {type:"string"}
+    # strength_schedule = "0: (1.0), 70: (1.0), 200: (0.65), 400: (0.6), 500: (0.5)"#@param {type:"string"}
+    # blend_schedule = "0: (1), 200: (1), 320: (0.6), 500: (0.1)"#@param {type:"string"}
     strength_schedule = "0: (1.0), 70: (1.0), 200: (0.65), 400: (0.6), 500: (0.5)"#@param {type:"string"}
     blend_schedule = "0: (1), 200: (1), 320: (0.6), 500: (0.1)"#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
@@ -1474,6 +1476,7 @@ def render_animation(args, anim_args):
             "strength": anim_args.strength_schedule,
             "blend": anim_args.blend_schedule,
             "angle": anim_args.angle,
+            "ffmpeg": anim_args.ffmpeg_cmd
         }, fp)
 
     # expand key frame strings to values
@@ -1493,7 +1496,7 @@ def render_animation(args, anim_args):
     print(f"Saving animation frames to {args.outdir}")
 
     # save settings for the batch
-    settings_filename = os.path.join(args.outdir, f"{args.timestring}_settings.txt")
+    settings_filename = os.path.join(args.outdir, f"00_{args.timestring}_settings.txt")
     with open(settings_filename, "w+", encoding="utf-8") as f:
         s = {**dict(args.__dict__), **dict(anim_args.__dict__)}
         json.dump(s, f, ensure_ascii=False, indent=4)
@@ -1874,6 +1877,28 @@ elif anim_args.animation_mode == 'Video Input':
 gc.collect()
 torch.cuda.empty_cache()
 
+
+mp4_path = os.path.join(args.outdir, f"{args.timestring}.mp4")
+max_frames = str(anim_args.max_frames)
+cmd = [
+    'ffmpeg',
+    '-y',
+    '-vcodec', 'png',
+    '-r', str(fps),
+    '-start_number', str(0),
+    '-i', image_path,
+    '-frames:v', max_frames,
+    '-c:v', 'libx264',
+    '-vf',
+    f'fps={fps}',
+    '-pix_fmt', 'yuv420p',
+    '-crf', '17',
+    '-preset', 'veryfast',
+    '-pattern_type', 'sequence',
+    mp4_path
+]
+anim_args.ffmpeg_cmd = " ".join(cmd)
+
 # dispatch to appropriate renderer
 if anim_args.animation_mode == '2D' or anim_args.animation_mode == '3D':
     render_animation(args, anim_args)
@@ -1924,23 +1949,6 @@ else:
             max_frames = str(anim_args.max_frames)
 
     # make video
-    cmd = [
-        'ffmpeg',
-        '-y',
-        '-vcodec', 'png',
-        '-r', str(fps),
-        '-start_number', str(0),
-        '-i', image_path,
-        '-frames:v', max_frames,
-        '-c:v', 'libx264',
-        '-vf',
-        f'fps={fps}',
-        '-pix_fmt', 'yuv420p',
-        '-crf', '17',
-        '-preset', 'veryfast',
-        '-pattern_type', 'sequence',
-        mp4_path
-    ]
     # ffmpeg -y -vcodec png -r 24 -start_number 0 -i /notebooks/outputs/freesuburb/11_20__09_43/20221120094405_%05d.png -frames:v 524 -c:v libx264 -vf fps=24 -pix_fmt yuv420p -crf 17 -preset veryslow -pattern_type sequence /notebooks/sub2.mp4
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
