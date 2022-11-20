@@ -5,7 +5,7 @@ ENV = os.environ
 
 vid_strength = float(ENV.get("STRENGTH", 1))
 video_file_name = ENV.get("VID_FILE", "costa.mp4")
-vid_prompt = ENV.get("VID_PROMPT", "sad bipedal cartoon bears walking in a dark psychedelic green forest, steampunk")
+vid_prompt = ENV.get("VID_PROMPT", "bipedal cartoon bears laying in fall foliage in a dark forest, steampunk")
 enhanced_vid_mode = ENV.get("VID_MODE_OFF", True)
 # Set to overwrite video inputframes if they already exist
 rewrite_video_frames = ENV.get("REWRITE_VIDEO_FRAMES", False)
@@ -113,12 +113,12 @@ def DeforumAnimArgs():
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
     noise_schedule = "0: (0.02)"#@param {type:"string"}
-    zoom = "0:(0.96)"#@param {type:"string"}
-    angle = "0:(0.5)"#@param {type:"string"}
+    zoom = "0:(1.04)"#@param {type:"string"}
+    angle = "0:(1)"#@param {type:"string"}
     # strength_schedule = "0: (1.0), 70: (1.0), 200: (0.65), 400: (0.6), 500: (0.5)"#@param {type:"string"}
     # blend_schedule = "0: (1), 200: (1), 320: (0.6), 500: (0.1)"#@param {type:"string"}
     # I think stren should reset when we change to iter
-    strength_schedule = "0: (1), 75: (1), 200: (0.55), 201: (0.95), 250: (0.6), 500: (0.5)"#@param {type:"string"}
+    strength_schedule = "0: (1), 75: (1), 200: (0.5), 201: (0.99), 220: (0.5)" #@param {type:"string"}
     blend_schedule = "0: (1), 200: (1), 201: (0)"#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
     seed_iter_frame = 200
@@ -1475,8 +1475,8 @@ def render_animation(args, anim_args):
     # animations use key framed prompts
     args.prompts = animation_prompts
     import json
-    with open(os.path.join(args.outdir, '00_ffmpg.json'), 'w') as fp:
-        json.dump(anim_args.ffmpeg_cmd, fp)
+    with open(os.path.join(args.outdir, '00_ffmpg.txt'), 'w') as fp:
+        fp.write(anim_args.ffmpeg_cmd)
 
     # expand key frame strings to values
     keys = DeformAnimKeys(anim_args)
