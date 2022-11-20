@@ -155,8 +155,10 @@ def DeforumAnimArgs():
 
 
 def get_output_folder(viddir):
-    lst = os.listdir(viddir)
-    num_dirs = len(lst)
+    num_dirs = 0
+    if os.path.exists(viddir):
+        lst = os.listdir(viddir)
+        num_dirs = len(lst)
     out_path = os.path.join(viddir,time.strftime(f"_{num_dirs}_%m_%d__%H_%M"))
     # if batch_folder != "":
     #     out_path = os.path.join(out_path, batch_folder)
