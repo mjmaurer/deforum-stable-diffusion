@@ -1620,9 +1620,9 @@ def render_animation(args, anim_args):
             blend_sample = contrast_sample
             # !blend
             if enhanced_vid_mode:
-                vid_frame = cv2.imread(args.init_image)
-                vid_frame = cv2.resize(vid_frame, (args.W, args.H))
-                blend_sample = cv2.addWeighted(vid_frame, blend, contrast_sample, 1 - blend, 0)
+                vid_frame, mask = load_img(args.init_image, (args.W, args.H), use_alpha_as_mask=args.use_alpha_as_mask)
+                vid_frame_cv = sample_to_cv2(vid_frame, (args.W, args.H))
+                blend_sample = cv2.addWeighted(vid_frame_cv, blend, contrast_sample, 1 - blend, 0)
             noised_sample = add_noise(sample_from_cv2(blend_sample), noise)
 
             # use transformed previous frame as init for current
