@@ -1,7 +1,9 @@
 import os
 ENV = os.environ
 
+vid_strength = float(ENV.get("STRENGTH", .6))
 video_file_name = ENV.get("VID_FILE", "NA")
+vid_prompt = ENV.get("VID_PROMPT", "a sad bear in a forest, by victo ngai, kilian eng vibrant colors, dynamic lighting")
 # Set to overwrite video inputframes if they already exist
 rewrite_video_frames = ENV.get("REWRITE_VIDEO_FRAMES", False)
 if not ENV.get("SKIP_SETUP", False):
@@ -58,10 +60,10 @@ import re
 from scipy.ndimage import gaussian_filter
 
 animation_prompts = {
-    0: "a beautiful apple, trending on Artstation",
-    20: "a beautiful banana, trending on Artstation",
-    30: "a beautiful coconut, trending on Artstation",
-    40: "a beautiful durian, trending on Artstation",
+    0: vid_prompt 
+    # 20: "a beautiful banana, trending on Artstation",
+    # 30: "a beautiful coconut, trending on Artstation",
+    # 40: "a beautiful durian, trending on Artstation",
 }
 base = "/storage/deforumsd"
 input_base = f"{base}/input"
@@ -193,7 +195,7 @@ def DeforumArgs():
     use_init = False #@param {type:"boolean"}
     # !imp strength of 1 means output frame is input frame. .1 will look nothing like it
     # !forvid could ramp up strength for each frame
-    strength = 0.8 #@param {type:"number"}
+    strength = vid_strength #@param {type:"number"}
     strength_0_no_init = True # Set the strength to 0 automatically when no init image is used
     init_image = "https://cdn.pixabay.com/photo/2022/07/30/13/10/green-longhorn-beetle-7353749_1280.jpg" #@param {type:"string"}
     # Whiter areas of the mask are areas that change more
