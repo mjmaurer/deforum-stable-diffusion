@@ -159,8 +159,8 @@ def get_output_folder(viddir):
 def DeforumArgs():
     #@markdown **Image Settings**
     # !imp
-    W = 2048 #@param 720
-    H = 1152 #@param 405
+    W = 2048 / 2 #@param 720
+    H = 1152 / 2 #@param 405
     W, H = map(lambda x: x - x % 64, (W, H))  # resize to integer multiple of 64
 
     #@markdown **Sampling Settings**
@@ -1622,6 +1622,8 @@ def render_animation(args, anim_args):
             if enhanced_vid_mode:
                 vid_frame, mask = load_img(args.init_image, (args.W, args.H), use_alpha_as_mask=args.use_alpha_as_mask)
                 vid_frame_cv = sample_to_cv2(vid_frame, type=np.float32)
+                print(contrast_sample.dtype)
+                print(vid_frame.dtype)
                 blend_sample = cv2.addWeighted(vid_frame_cv, blend, contrast_sample, 1 - blend, 0)
             noised_sample = add_noise(sample_from_cv2(blend_sample), noise)
 
