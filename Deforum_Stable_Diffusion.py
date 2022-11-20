@@ -5,7 +5,7 @@ ENV = os.environ
 
 vid_strength = float(ENV.get("STRENGTH", 1))
 video_file_name = ENV.get("VID_FILE", "20testzoom.mp4")
-vid_prompt = ENV.get("VID_PROMPT", "bipedal cartoon bears laying in fall foliage in a dark forest, steampunk")
+vid_prompt = ENV.get("VID_PROMPT", "two bipedal cartoon bears laying in fall foliage in a dark forest, steampunk")
 enhanced_vid_mode = ENV.get("VID_MODE_OFF", True)
 # Set to overwrite video inputframes if they already exist
 rewrite_video_frames = ENV.get("REWRITE_VIDEO_FRAMES", False)
@@ -120,7 +120,7 @@ def DeforumAnimArgs():
     switch_frame = 10 * 24 + 12
     zoom = f"0:(0), {switch_frame}:(1.04)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame}:(1)" #@param {type:"string"}
-    strength_schedule = f"0: (1), {switch_frame - 150}: (1), {switch_frame - 1}: (0.5), {switch_frame}: (0.99), {switch_frame + 20}: (0.5)" #@param {type:"string"}
+    strength_schedule = f"0: (1), {switch_frame - 150}: (1), {switch_frame - 1}: (0.55), {switch_frame}: (0.99), {switch_frame + 20}: (0.5)" #@param {type:"string"}
     blend_schedule = f"0: (1), {switch_frame - 1}: (1), {switch_frame}: (0)"#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
     seed_iter_frame = switch_frame - 1
