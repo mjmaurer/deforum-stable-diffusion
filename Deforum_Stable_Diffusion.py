@@ -5,7 +5,7 @@ ENV = os.environ
 
 vid_strength = float(ENV.get("STRENGTH", 1))
 video_file_name = ENV.get("VID_FILE", "20testzoom.mp4")
-vid_prompt = ENV.get("VID_PROMPT", "two bipedal cartoon bears walking in fall foliage in a dark forest, steampunk")
+vid_prompt = ENV.get("VID_PROMPT", "two bipedal cartoon bears walking in fall foliage in a dark forest, steampunk, high detail")
 enhanced_vid_mode = ENV.get("VID_MODE_OFF", True)
 # Set to overwrite video inputframes if they already exist
 rewrite_video_frames = ENV.get("REWRITE_VIDEO_FRAMES", False)
