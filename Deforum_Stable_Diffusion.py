@@ -1564,7 +1564,23 @@ def render_animation(args, anim_args):
         contrast = keys.contrast_schedule_series[frame_idx]
         blend = keys.blend_schedule_series[frame_idx]
         depth = None
-        
+
+        # grab init image for current frame
+        # TODO move input frames into vid dir and try and cache
+        if using_vid_init:
+            init_frame = os.path.join(args.viddir, 'inputframes', f"{frame_idx+1:05}.jpg")            
+            print(f"Using video init frame {init_frame}")
+            args.init_image = init_frame
+            if anim_args.use_mask_video:
+                mask_frame = os.path.join(args.outdir, 'maskframes', f"{frame_idx+1:05}.jpg")
+                args.mask_file = mask_frame
+
+        vid_frame = None
+        vid_frame_cv = None
+        if using_vid_init and enhanced_vid_mode:
+            vid_frame, mask = load_img(args.init_image, (args.W, args.H), use_alpha_as_mask=args.use_alpha_as_mask)
+            vid_frame_cv = sample_to_cv2(vid_frame, type=np.float64)
+
         # emit in-between frames
         # turbo_steps = 1 for vid input 
         if turbo_steps > 1:
@@ -1592,10 +1608,17 @@ def render_animation(args, anim_args):
                         turbo_next_image = anim_frame_warp_3d(turbo_next_image, depth, anim_args, keys, tween_frame_idx)
                 turbo_prev_frame_idx = turbo_next_frame_idx = tween_frame_idx
 
+                if enhanced_vid_mode and anim_args.seed_iter_frame < frame_idx:
+                    if advance_prev:
+                        turbo_prev_image = vid_frame_cv 
+                    if advance_next:
+                        turbo_next_image = vid_frame_cv 
+
                 if turbo_prev_image is not None and tween < 1.0:
                     img = turbo_prev_image*(1.0-tween) + turbo_next_image*tween
                 else:
                     img = turbo_next_image
+
 
                 filename = f"{args.timestring}_{tween_frame_idx:05}.png"
                 cv2.imwrite(os.path.join(args.outdir, filename), cv2.cvtColor(img.astype(np.uint8), cv2.COLOR_RGB2BGR))
@@ -1603,16 +1626,6 @@ def render_animation(args, anim_args):
                     depth_model.save(os.path.join(args.outdir, f"{args.timestring}_depth_{tween_frame_idx:05}.png"), depth)
             if turbo_next_image is not None:
                 prev_sample = sample_from_cv2(turbo_next_image)
-
-        # grab init image for current frame
-        # TODO move input frames into vid dir and try and cache
-        if using_vid_init:
-            init_frame = os.path.join(args.viddir, 'inputframes', f"{frame_idx+1:05}.jpg")            
-            print(f"Using video init frame {init_frame}")
-            args.init_image = init_frame
-            if anim_args.use_mask_video:
-                mask_frame = os.path.join(args.outdir, 'maskframes', f"{frame_idx+1:05}.jpg")
-                args.mask_file = mask_frame
 
         # apply transforms to previous frame
         if prev_sample is not None:
@@ -1636,8 +1649,6 @@ def render_animation(args, anim_args):
             blend_sample = contrast_sample
             # !blend
             if enhanced_vid_mode:
-                vid_frame, mask = load_img(args.init_image, (args.W, args.H), use_alpha_as_mask=args.use_alpha_as_mask)
-                vid_frame_cv = sample_to_cv2(vid_frame, type=np.float64)
                 blend_sample = cv2.addWeighted(vid_frame_cv, blend, contrast_sample, 1 - blend, 0)
             noised_sample = add_noise(sample_from_cv2(blend_sample), noise)
 
