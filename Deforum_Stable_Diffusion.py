@@ -100,7 +100,6 @@ def DeforumAnimArgs():
     # angle is rotate in degrees
     #@markdown ####**Motion Parameters:**
     # !changed no zoom: zoom = "0:(1.04)"#@param {type:"string"}
-    zoom = "0:(1)"#@param {type:"string"}
     # ! changed translation_x = "0:(10*sin(2*3.14*t/10))"#@param {type:"string"}
     translation_x = "0:(0)"#@param {type:"string"}
     translation_y = "0:(0)"#@param {type:"string"}
@@ -113,12 +112,13 @@ def DeforumAnimArgs():
     perspective_flip_phi = "0:(t%15)"#@param {type:"string"}
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
-    noise_schedule = "0: (0.02), 200: (0.02), 500: (0.02)"#@param {type:"string"}
-    angle = "0:(1), 100: (1), 500: (1)"#@param {type:"string"}
+    noise_schedule = "0: (0.02)"#@param {type:"string"}
+    zoom = "0:(0.98)"#@param {type:"string"}
+    angle = "0:(0.5)"#@param {type:"string"}
     # strength_schedule = "0: (1.0), 70: (1.0), 200: (0.65), 400: (0.6), 500: (0.5)"#@param {type:"string"}
     # blend_schedule = "0: (1), 200: (1), 320: (0.6), 500: (0.1)"#@param {type:"string"}
     strength_schedule = "0: (1), 75: (1), 200: (0.55), 300: (0.5), 500: (0.5)"#@param {type:"string"}
-    blend_schedule = "0: (1), 100: (1), 200: (0.5), 201: (0)"#@param {type:"string"}
+    blend_schedule = "0: (1), 200: (1), 201: (0)"#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
     seed_iter_frame = 200
 
@@ -1474,14 +1474,8 @@ def render_animation(args, anim_args):
     # animations use key framed prompts
     args.prompts = animation_prompts
     import json
-    with open(os.path.join(args.outdir, '00_prompt.json'), 'w') as fp:
-        json.dump({
-            "prompts": args.prompts,
-            "strength": anim_args.strength_schedule,
-            "blend": anim_args.blend_schedule,
-            "angle": anim_args.angle,
-            "ffmpeg": anim_args.ffmpeg_cmd
-        }, fp)
+    with open(os.path.join(args.outdir, '00_ffmpg.json'), 'w') as fp:
+        json.dump(anim_args.ffmpeg_cmd, fp)
 
     # expand key frame strings to values
     keys = DeformAnimKeys(anim_args)
