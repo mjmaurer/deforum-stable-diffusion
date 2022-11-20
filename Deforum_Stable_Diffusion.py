@@ -121,7 +121,7 @@ def DeforumAnimArgs():
     zoom = f"0:(0), {switch_frame}:(1.04)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame}:(1)" #@param {type:"string"}
     strength_schedule = f"0: (1), {switch_frame - 150}: (1), {switch_frame - 1}: (0.55), {switch_frame}: (0.95), {switch_frame + 20}: (0.5)" #@param {type:"string"}
-    blend_schedule = f"0: (1), {switch_frame - 100}: (1), {switch_frame - 1}: (0.8), {switch_frame}: (0) "#@param {type:"string"}
+    blend_schedule = f"0: (1), {switch_frame - 100}: (1), {switch_frame - 1}: (0.75), {switch_frame}: (0) "#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
     seed_iter_frame = switch_frame - 1
 
@@ -178,7 +178,7 @@ def DeforumArgs():
     #@markdown **Sampling Settings**
     seed = -1 #@param
     sampler = 'klms' #@param ["klms","dpm2","dpm2_ancestral","heun","euler","euler_ancestral","plms", "ddim"]
-    steps = 90 #@param
+    steps = 100 #@param
     # !imp higher scale means more of an image change? or maybe the other way around
     scale = 7 #@param
     ddim_eta = 0.0 #@param
