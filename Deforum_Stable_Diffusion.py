@@ -5,7 +5,7 @@ ENV = os.environ
 
 vid_strength = float(ENV.get("STRENGTH", 1))
 video_file_name = ENV.get("VID_FILE", "20testzoom.mp4")
-vid_prompt = ENV.get("VID_PROMPT", "organic network of branches leaves and rocks in fall foilage, high detail, trippy, abstract")
+vid_prompt = ENV.get("VID_PROMPT", "psychedelic organic network of branches leaves and rocks in fall foilage, high detail, trippy, abstract")
 enhanced_vid_mode = ENV.get("VID_MODE_OFF", True)
 # Set to overwrite video inputframes if they already exist
 rewrite_video_frames = ENV.get("REWRITE_VIDEO_FRAMES", False)
@@ -1478,8 +1478,10 @@ def render_animation(args, anim_args):
     # animations use key framed prompts
     args.prompts = animation_prompts
     import json
-    with open(os.path.join(args.outdir, '00_ffmpg.txt'), 'w') as fp:
+    with open(os.path.join(args.outdir, '00_ffmpeg.txt'), 'w') as fp:
         fp.write(anim_args.ffmpeg_cmd)
+    with open(os.path.join(args.outdir, '00_prompt.txt'), 'w') as fp:
+        json.dump(args.prompts, fp)
 
     # expand key frame strings to values
     keys = DeformAnimKeys(anim_args)
