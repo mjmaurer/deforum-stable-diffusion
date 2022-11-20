@@ -1455,6 +1455,9 @@ def render_image_batch(args):
 def render_animation(args, anim_args):
     # animations use key framed prompts
     args.prompts = animation_prompts
+    import json
+    with open(os.path.join(args.outdir, '00_prompt.json'), 'w') as fp:
+        json.dump(args.prompts, fp)
 
     # expand key frame strings to values
     keys = DeformAnimKeys(anim_args)
@@ -1536,6 +1539,7 @@ def render_animation(args, anim_args):
         depth = None
         
         # emit in-between frames
+        # turbo_steps = 1 for vid input 
         if turbo_steps > 1:
             tween_frame_start_idx = max(0, frame_idx-turbo_steps)
             for tween_frame_idx in range(tween_frame_start_idx, frame_idx):
