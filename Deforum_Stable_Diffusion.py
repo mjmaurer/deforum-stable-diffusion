@@ -120,9 +120,9 @@ def DeforumAnimArgs():
     switch_frame = 3 * 24
     strength_build = 30 # 150
     blend_build = 10 # 100
-    zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.01)" #@param {type:"string"}
+    zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.001)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 1}:(0), {switch_frame}:(1)" #@param {type:"string"}
-    strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame - 1}: (0.65), {switch_frame}: (0.9), {switch_frame + 200}: (0.55)" #@param {type:"string"}
+    strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame - 1}: (0.65), {switch_frame}: (0.75), {switch_frame + 200}: (0.55)" #@param {type:"string"}
     blend_schedule = f"0: (1), {switch_frame - blend_build}: (1), {switch_frame - 1}: (0.95), {switch_frame}: (0) "#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
     seed_iter_frame = switch_frame - 1
