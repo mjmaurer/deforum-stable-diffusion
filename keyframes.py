@@ -1,5 +1,6 @@
+from dataclasses import dataclass
 from decimal import Decimal
-from typing import Literal
+from typing import Literal, Optional, Tuple
 
 
 class InterpolationMode:
@@ -7,38 +8,13 @@ class InterpolationMode:
         pass
 
 
-KeyframeTimeUnit = Literal["beat", "second", "frame"]
+TimeUnit = Literal["beat", "second", "frame"]
 
 
+@dataclass
 class Keyframe:
-    def __init__(
-        self,
-        val: float,
-        interpolation_mode: InterpolationMode,
-        time_measure: KeyframeTimeUnit,
-        beat: Decimal,
-        second: Decimal,
-        frame: int,
-    ) -> None:
-        """
-        Args:
-            val (float): _description_
-            interpolation_mode (InterpolationMode): Describes the mode *after* this keyframe
-        """
-        if time_measure == "frame" and not frame:
-            raise Exception("No frame specified")
-        if time_measure == "beat" and not beat:
-            raise Exception("No beat specified")
-        if time_measure == "second" and not second:
-            raise Exception("No second specified")
-        self.beat = beat
-        self.frame = frame
-        self.second = second
-
-
-class KeyframeFactory:
-    def __init__(self) -> None:
-        pass
+    val: float
+    time: Decimal
 
 
 class Timeline:
@@ -46,24 +22,37 @@ class Timeline:
     Represents the animation timeline of a single parameter
     """
 
-    def __init__(self, scene) -> None:
-        self.keyframes: list[Keyframe] = []
-        self.scene: Scene = scene
+    def __init__(
+        self, keyframes: list[Keyframe], time_unit: TimeUnit = "frame", repeat_after: int = 0
+    ) -> None:
+        self.keyframes: list[Keyframe] = keyframes
+        self.time_unit = time_unit
+        self.repeat_after = repeat_after
 
-    def add_keyframe(self, keyframe: Keyframe) -> None:
-        self.keyframes.append(keyframe)
+    def _get_first_keyframe(self):
+        return self.keyframes[0]
+
+    def _get_last_keyframe(self):
+        return self.keyframes[len(self.keyframes) - 1]
+
+
+    def _get_keyframes_for_frame(self, frame: int) -> Tuple[Keyframe, Keyframe]:
+        start = self._get_last_keyframe() 
+        end = self._get_first_keyframe() 
+
+    def set_scene(self, scene) -> None:
+        self.scene = scene
 
     def get_val_at_frame(self, frame: int) -> float:
         return 0
 
 
 class Scene:
-    def __init__(self, bpm, fps) -> None:
+    def __init__(self, bpm=120, fps=24) -> None:
         self.bpm = bpm
         self.fps = fps
         self.timelines: list[Timeline] = []
 
-    def new_timeline(self) -> Timeline:
-        timeline = Timeline(self)
+    def add_timeline(self, timeline: Timeline):
+        timeline.set_scene(self)
         self.timelines.append(timeline)
-        return timeline

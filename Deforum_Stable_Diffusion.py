@@ -1,4 +1,6 @@
 import os
+
+from keyframes import Keyframe, Scene
 ENV = os.environ
 
 vid_strength = float(ENV.get("STRENGTH", .6))
@@ -97,7 +99,7 @@ def DeforumAnimArgs():
     # 0:(1) The first number is the frame and the second is the value
     # angle is rotate in degrees
     #@markdown ####**Motion Parameters:**
-    angle = "0:(5)"#@param {type:"string"}
+    angle = "0:(15)"#@param {type:"string"}
     # !changed no zoom: zoom = "0:(1.04)"#@param {type:"string"}
     zoom = "0:(1)"#@param {type:"string"}
     # ! changed translation_x = "0:(10*sin(2*3.14*t/10))"#@param {type:"string"}
@@ -113,9 +115,9 @@ def DeforumAnimArgs():
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
     noise_schedule = "0: (0.02)"#@param {type:"string"}
-    strength_schedule = "0: (0.65)"#@param {type:"string"}
+    strength_schedule = "0: (1.0), 100: (0.7), 200: (0.6), 300: (0.5)"#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
-    blend_schedule = "0: (0.9)"#@param {type:"string"}
+    blend_schedule = "0: (1), 80: (0.9), 160: (0.7), 240: (0.4)"#@param {type:"string"}
 
     #@markdown ####**Coherence:**
     color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
@@ -1622,8 +1624,6 @@ def render_animation(args, anim_args):
             if enhanced_vid_mode:
                 vid_frame, mask = load_img(args.init_image, (args.W, args.H), use_alpha_as_mask=args.use_alpha_as_mask)
                 vid_frame_cv = sample_to_cv2(vid_frame, type=np.float64)
-                print(contrast_sample.dtype)
-                print(vid_frame_cv.dtype)
                 blend_sample = cv2.addWeighted(vid_frame_cv, blend, contrast_sample, 1 - blend, 0)
             noised_sample = add_noise(sample_from_cv2(blend_sample), noise)
 
@@ -1633,7 +1633,7 @@ def render_animation(args, anim_args):
                 args.init_sample = noised_sample.half().to(device)
             else:
                 args.init_sample = noised_sample.to(device)
-            args.strength = max(0.0, min(1.0, args.strength))
+            args.strength = max(0.0, min(1.0, strength))
 
         # grab prompt for current frame
         args.prompt = prompt_series[frame_idx]
