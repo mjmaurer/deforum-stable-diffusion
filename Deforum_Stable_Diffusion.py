@@ -1538,6 +1538,7 @@ def render_animation(args, anim_args):
             turbo_prev_image, turbo_prev_frame_idx = turbo_next_image, turbo_next_frame_idx
             start_frame = last_frame+turbo_steps
 
+    # !frameloop
     args.n_samples = 1
     frame_idx = start_frame
     while frame_idx < anim_args.max_frames:
@@ -1617,8 +1618,10 @@ def render_animation(args, anim_args):
             contrast_sample = prev_img * contrast
             # apply frame noising
             blend_sample = contrast_sample
+            # !blend
             if enhanced_vid_mode:
-                vid_frame = load_cv_img(args.init_image, shape=(args.W, args.H), use_alpha_as_mask=args.use_alpha_as_mask)
+                vid_frame = cv2.imread(args.init_image)
+                vid_frame = cv2.resize(vid_frame, (args.W, args.H))
                 blend_sample = cv2.addWeighted(vid_frame, blend, contrast_sample, 1 - blend, 0)
             noised_sample = add_noise(sample_from_cv2(blend_sample), noise)
 
