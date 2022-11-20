@@ -114,10 +114,10 @@ def DeforumAnimArgs():
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
     noise_schedule = "0: (0), 200: (0), 500: (0.02)"#@param {type:"string"}
-    angle = "0:(0), 120: (0), 500: (5)"#@param {type:"string"}
-    strength_schedule = "0: (1.0), 200: (0.65), 400: (0.6), 500: (0.5)"#@param {type:"string"}
+    angle = "0:(0), 200: (0), 500: (5)"#@param {type:"string"}
+    strength_schedule = "0: (1.0), 70: (1.0), 200: (0.65), 400: (0.6), 500: (0.5)"#@param {type:"string"}
+    blend_schedule = "0: (1), 200: (1), 320: (0.6), 500: (0.1)"#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
-    blend_schedule = "0: (1), 200: (1), 320: (0.1), 500: (0.1)"#@param {type:"string"}
     seed_iter_frame = 500
 
     #@markdown ####**Coherence:**
@@ -239,7 +239,7 @@ custom_settings_file = f"{base}/drive/MyDrive/Settings.txt"#@param {type:"string
 
 # !imp False for generating video from frames
 skip_video_for_run_all = False #@param {type: 'boolean'}
-fps = 12 #@param {type:"number"}
+fps = 24 #@param {type:"number"}
 #@markdown **Manual Settings**
 use_manual_settings = False #@param {type:"boolean"}
 image_path = f"{base}/drive/MyDrive/AI/StableDiffusion/2022-09/20220903000939_%05d.png" #@param {type:"string"}
@@ -1397,7 +1397,7 @@ def render_image_batch(args):
 
     # save settings for the batch
     if args.save_settings:
-        filename = os.path.join(args.outdir, f"{args.timestring}_settings.txt")
+        filename = os.path.join(args.outdir, f"00_{args.timestring}_settings.txt")
         with open(filename, "w+", encoding="utf-8") as f:
             json.dump(dict(args.__dict__), f, ensure_ascii=False, indent=4)
 
@@ -1941,7 +1941,7 @@ else:
         '-pattern_type', 'sequence',
         mp4_path
     ]
-    # ffmpeg -y -vcodec png -r 24 -start_number 0 -i /notebooks/outputs/freesuburb/11_20__09_06/20221120090645_%05d.png -frames:v 524 -c:v libx264 -vf fps=24 -pix_fmt yuv420p -crf 17 -preset veryfast -pattern_type sequence /notebooks/12345.mp4
+    # ffmpeg -y -vcodec png -r 24 -start_number 0 -i /notebooks/outputs/freesuburb/11_20__09_43/20221120094405_%05d.png -frames:v 524 -c:v libx264 -vf fps=24 -pix_fmt yuv420p -crf 17 -preset veryslow -pattern_type sequence /notebooks/sub2.mp4
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
     if process.returncode != 0:
