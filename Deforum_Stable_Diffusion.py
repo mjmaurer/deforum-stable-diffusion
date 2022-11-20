@@ -3,7 +3,7 @@ import os
 from keyframes import Keyframe, Scene
 ENV = os.environ
 
-vid_strength = float(ENV.get("STRENGTH", .6))
+vid_strength = float(ENV.get("STRENGTH", 1))
 video_file_name = ENV.get("VID_FILE", "NA")
 vid_prompt = ENV.get("VID_PROMPT", "a sad bear in a forest, by victo ngai, kilian eng vibrant colors, dynamic lighting")
 enhanced_vid_mode = ENV.get("VID_MODE_OFF", True)
@@ -99,7 +99,6 @@ def DeforumAnimArgs():
     # 0:(1) The first number is the frame and the second is the value
     # angle is rotate in degrees
     #@markdown ####**Motion Parameters:**
-    angle = "0:(15)"#@param {type:"string"}
     # !changed no zoom: zoom = "0:(1.04)"#@param {type:"string"}
     zoom = "0:(1)"#@param {type:"string"}
     # ! changed translation_x = "0:(10*sin(2*3.14*t/10))"#@param {type:"string"}
@@ -115,9 +114,11 @@ def DeforumAnimArgs():
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
     noise_schedule = "0: (0.02)"#@param {type:"string"}
-    strength_schedule = "0: (1.0), 200: (0.7), 400: (0.6), 800: (0.5)"#@param {type:"string"}
+    angle = "0:(0), 120: (0), 320: (10), 500: (20)"#@param {type:"string"}
+    strength_schedule = "0: (1.0), 100: (1.0), 200: (0.7), 400: (0.6), 500: (0.52)"#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
-    blend_schedule = "0: (1), 160: (0.9), 320: (0.7), 500: (0.3)"#@param {type:"string"}
+    blend_schedule = "0: (1), 260: (1), 320: (0.2), 500: (0.1)"#@param {type:"string"}
+    seed_iter_frame = 300
 
     #@markdown ####**Coherence:**
     color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
@@ -243,7 +244,7 @@ fps = 12 #@param {type:"number"}
 use_manual_settings = False #@param {type:"boolean"}
 image_path = f"{base}/drive/MyDrive/AI/StableDiffusion/2022-09/20220903000939_%05d.png" #@param {type:"string"}
 mp4_path = f"{base}/drive/MyDrive/AI/StableDiffu'/content/drive/MyDrive/AI/StableDiffusion/2022-09/sion/2022-09/20220903000939.mp4" #@param {type:"string"}
-render_steps = True  #@param {type: 'boolean'}
+render_steps = False  #@param {type: 'boolean'}
 path_name_modifier = "x0_pred" #@param ["x0_pred","x"]
 
 manual_max_frames_1 = "200"
@@ -1468,7 +1469,12 @@ def render_animation(args, anim_args):
     args.prompts = animation_prompts
     import json
     with open(os.path.join(args.outdir, '00_prompt.json'), 'w') as fp:
-        json.dump(args.prompts, fp)
+        json.dump({
+            "prompts": args.prompts,
+            "strength": anim_args.strength_schedule,
+            "blend": anim_args.blend_schedule,
+            "angle": anim_args.angle,
+        }, fp)
 
     # expand key frame strings to values
     keys = DeformAnimKeys(anim_args)
@@ -1634,6 +1640,9 @@ def render_animation(args, anim_args):
             else:
                 args.init_sample = noised_sample.to(device)
             args.strength = max(0.0, min(1.0, strength))
+
+        if enhanced_vid_mode and frame_idx > anim_args.seed_iter_frame:
+            args.seed_behavior = 'iter' # force fix seed at the moment bc only 1 seed is available
 
         # grab prompt for current frame
         args.prompt = prompt_series[frame_idx]
@@ -1932,15 +1941,16 @@ else:
         '-pattern_type', 'sequence',
         mp4_path
     ]
+    # ffmpeg -y -vcodec png -r 24 -start_number 0 -i /notebooks/outputs/freesuburb/11_20__07_43/20221120074416_%05d.png -frames:v 524 -c:v libx264 -vf fps=24 -pix_fmt yuv420p -crf 17 -preset veryfast -pattern_type sequence /notebooks/1234.mp4
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
     if process.returncode != 0:
         print(stderr)
         raise RuntimeError(stderr)
 
-    mp4 = open(mp4_path,'rb').read()
-    data_url = "data:video/mp4;base64," + b64encode(mp4).decode()
-    display.display( display.HTML(f'<video controls loop><source src="{data_url}" type="video/mp4"></video>') )
+    # mp4 = open(mp4_path,'rb').read()
+    # data_url = "data:video/mp4;base64," + b64encode(mp4).decode()
+    # display.display( display.HTML(f'<video controls loop><source src="{data_url}" type="video/mp4"></video>') )
 
 # %%
 # !! {"metadata":{
