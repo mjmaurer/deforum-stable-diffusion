@@ -169,7 +169,7 @@ def DeforumArgs():
     #@markdown **Sampling Settings**
     seed = -1 #@param
     sampler = 'klms' #@param ["klms","dpm2","dpm2_ancestral","heun","euler","euler_ancestral","plms", "ddim"]
-    steps = 50 #@param
+    steps = 60 #@param
     # !imp higher scale means more of an image change? or maybe the other way around
     scale = 7 #@param
     ddim_eta = 0.0 #@param
