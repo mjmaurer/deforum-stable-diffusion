@@ -4,6 +4,7 @@ ENV = os.environ
 vid_strength = float(ENV.get("STRENGTH", .6))
 video_file_name = ENV.get("VID_FILE", "NA")
 vid_prompt = ENV.get("VID_PROMPT", "a sad bear in a forest, by victo ngai, kilian eng vibrant colors, dynamic lighting")
+enhanced_vid_mode = ENV.get("VID_MODE_OFF", True)
 # Set to overwrite video inputframes if they already exist
 rewrite_video_frames = ENV.get("REWRITE_VIDEO_FRAMES", False)
 if not ENV.get("SKIP_SETUP", False):
@@ -93,8 +94,10 @@ def DeforumAnimArgs():
     max_frames = 1000 #@param {type:"number"}
     border = 'replicate' #@param ['wrap', 'replicate'] {type:'string'}
 
+    # 0:(1) The first number is the frame and the second is the value
+    # angle is rotate in degrees
     #@markdown ####**Motion Parameters:**
-    angle = "0:(0)"#@param {type:"string"}
+    angle = "0:(5)"#@param {type:"string"}
     # !changed no zoom: zoom = "0:(1.04)"#@param {type:"string"}
     zoom = "0:(1)"#@param {type:"string"}
     # ! changed translation_x = "0:(10*sin(2*3.14*t/10))"#@param {type:"string"}
@@ -112,6 +115,7 @@ def DeforumAnimArgs():
     noise_schedule = "0: (0.02)"#@param {type:"string"}
     strength_schedule = "0: (0.65)"#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
+    blend_schedule = "0: (0.7)"#@param {type:"string"}
 
     #@markdown ####**Coherence:**
     color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
@@ -529,8 +533,7 @@ def anim_frame_warp_3d(prev_img_cv2, depth, anim_args, keys, frame_idx):
 def add_noise(sample: torch.Tensor, noise_amt: float) -> torch.Tensor:
     return sample + torch.randn(sample.shape, device=sample.device) * noise_amt
 
-def load_img(path, shape, use_alpha_as_mask=False):
-    # use_alpha_as_mask: Read the alpha channel of the image as the mask image
+def load_cv_img(path, shape, use_alpha_as_mask=False):
     if path.startswith('http://') or path.startswith('https://'):
         image = Image.open(requests.get(path, stream=True).raw)
     else:
@@ -541,7 +544,12 @@ def load_img(path, shape, use_alpha_as_mask=False):
     else:
         image = image.convert('RGB')
 
-    image = image.resize(shape, resample=Image.LANCZOS)
+    return image.resize(shape, resample=Image.LANCZOS)
+
+
+def load_img(path, shape, use_alpha_as_mask=False):
+    # use_alpha_as_mask: Read the alpha channel of the image as the mask image
+    image = load_cv_img(path, shape, use_alpha_as_mask)
 
     mask_image = None
     if use_alpha_as_mask:
@@ -1275,6 +1283,7 @@ class DeformAnimKeys():
         self.noise_schedule_series = get_inbetweens(parse_key_frames(anim_args.noise_schedule), anim_args.max_frames)
         self.strength_schedule_series = get_inbetweens(parse_key_frames(anim_args.strength_schedule), anim_args.max_frames)
         self.contrast_schedule_series = get_inbetweens(parse_key_frames(anim_args.contrast_schedule), anim_args.max_frames)
+        self.blend_schedule_series = get_inbetweens(parse_key_frames(anim_args.blend_schedule), anim_args.max_frames)
 
 
 def get_inbetweens(key_frames, max_frames, integer=False, interp_method='Linear'):
@@ -1536,6 +1545,7 @@ def render_animation(args, anim_args):
         noise = keys.noise_schedule_series[frame_idx]
         strength = keys.strength_schedule_series[frame_idx]
         contrast = keys.contrast_schedule_series[frame_idx]
+        blend = keys.blend_schedule_series[frame_idx]
         depth = None
         
         # emit in-between frames
@@ -1577,6 +1587,16 @@ def render_animation(args, anim_args):
             if turbo_next_image is not None:
                 prev_sample = sample_from_cv2(turbo_next_image)
 
+        # grab init image for current frame
+        # TODO move input frames into vid dir and try and cache
+        if using_vid_init:
+            init_frame = os.path.join(args.viddir, 'inputframes', f"{frame_idx+1:05}.jpg")            
+            print(f"Using video init frame {init_frame}")
+            args.init_image = init_frame
+            if anim_args.use_mask_video:
+                mask_frame = os.path.join(args.outdir, 'maskframes', f"{frame_idx+1:05}.jpg")
+                args.mask_file = mask_frame
+
         # apply transforms to previous frame
         if prev_sample is not None:
             if anim_args.animation_mode == '2D':
@@ -1596,7 +1616,11 @@ def render_animation(args, anim_args):
             # apply scaling
             contrast_sample = prev_img * contrast
             # apply frame noising
-            noised_sample = add_noise(sample_from_cv2(contrast_sample), noise)
+            blend_sample = contrast_sample
+            if enhanced_vid_mode:
+                vid_frame = load_cv_img(args.init_image, shape=(args.W, args.H), use_alpha_as_mask=args.use_alpha_as_mask)
+                blend_sample = cv2.addWeighted(vid_frame, blend, contrast_sample, 1 - blend, 0)
+            noised_sample = add_noise(sample_from_cv2(blend_sample), noise)
 
             # use transformed previous frame as init for current
             args.use_init = True
@@ -1604,29 +1628,20 @@ def render_animation(args, anim_args):
                 args.init_sample = noised_sample.half().to(device)
             else:
                 args.init_sample = noised_sample.to(device)
-            args.strength = max(0.0, min(1.0, strength))
+            args.strength = max(0.0, min(1.0, args.strength))
 
         # grab prompt for current frame
         args.prompt = prompt_series[frame_idx]
         print(f"{args.prompt} {args.seed}")
-        if not using_vid_init:
+        if not using_vid_init or enhanced_vid_mode:
+            print(f"Strength: {args.strength}")
             print(f"Angle: {keys.angle_series[frame_idx]} Zoom: {keys.zoom_series[frame_idx]}")
             print(f"Tx: {keys.translation_x_series[frame_idx]} Ty: {keys.translation_y_series[frame_idx]} Tz: {keys.translation_z_series[frame_idx]}")
             print(f"Rx: {keys.rotation_3d_x_series[frame_idx]} Ry: {keys.rotation_3d_y_series[frame_idx]} Rz: {keys.rotation_3d_z_series[frame_idx]}")
 
-        # grab init image for current frame
-        # TODO move input frames into vid dir and try and cache
-        if using_vid_init:
-            init_frame = os.path.join(args.viddir, 'inputframes', f"{frame_idx+1:05}.jpg")            
-            print(f"Using video init frame {init_frame}")
-            args.init_image = init_frame
-            if anim_args.use_mask_video:
-                mask_frame = os.path.join(args.outdir, 'maskframes', f"{frame_idx+1:05}.jpg")
-                args.mask_file = mask_frame
-
         # sample the diffusion model
         sample, image = generate(args, frame_idx, return_latent=False, return_sample=True)
-        if not using_vid_init:
+        if not using_vid_init or enhanced_vid_mode:
             prev_sample = sample
 
         if turbo_steps > 1:
