@@ -115,7 +115,7 @@ def DeforumAnimArgs():
     noise_schedule = "0: (0.02)"#@param {type:"string"}
     strength_schedule = "0: (0.65)"#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
-    blend_schedule = "0: (0.7)"#@param {type:"string"}
+    blend_schedule = "0: (0.9)"#@param {type:"string"}
 
     #@markdown ####**Coherence:**
     color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
@@ -1639,7 +1639,7 @@ def render_animation(args, anim_args):
         args.prompt = prompt_series[frame_idx]
         print(f"{args.prompt} {args.seed}")
         if not using_vid_init or enhanced_vid_mode:
-            print(f"Strength: {args.strength}")
+            print(f"Strength: {args.strength}. Blend: {blend}")
             print(f"Angle: {keys.angle_series[frame_idx]} Zoom: {keys.zoom_series[frame_idx]}")
             print(f"Tx: {keys.translation_x_series[frame_idx]} Ty: {keys.translation_y_series[frame_idx]} Tz: {keys.translation_z_series[frame_idx]}")
             print(f"Rx: {keys.rotation_3d_x_series[frame_idx]} Ry: {keys.rotation_3d_y_series[frame_idx]} Rz: {keys.rotation_3d_z_series[frame_idx]}")
