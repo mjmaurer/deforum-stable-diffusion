@@ -5,7 +5,7 @@ ENV = os.environ
 
 vid_strength = float(ENV.get("STRENGTH", 1))
 video_file_name = ENV.get("VID_FILE", "freesuburb.mp4")
-vid_prompt = ENV.get("VID_PROMPT", "sad bipedal bears walking in a dark psychedelic forest")
+vid_prompt = ENV.get("VID_PROMPT", "sad bipedal bears walking in a dark psychedelic green forest, steampunk")
 enhanced_vid_mode = ENV.get("VID_MODE_OFF", True)
 # Set to overwrite video inputframes if they already exist
 rewrite_video_frames = ENV.get("REWRITE_VIDEO_FRAMES", False)
@@ -113,14 +113,14 @@ def DeforumAnimArgs():
     perspective_flip_phi = "0:(t%15)"#@param {type:"string"}
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
-    noise_schedule = "0: (0), 200: (0), 500: (0.02)"#@param {type:"string"}
-    angle = "0:(0), 200: (1), 500: (5)"#@param {type:"string"}
+    noise_schedule = "0: (0.02), 200: (0.02), 500: (0.02)"#@param {type:"string"}
+    angle = "0:(2), 100: (2), 500: (5)"#@param {type:"string"}
     # strength_schedule = "0: (1.0), 70: (1.0), 200: (0.65), 400: (0.6), 500: (0.5)"#@param {type:"string"}
     # blend_schedule = "0: (1), 200: (1), 320: (0.6), 500: (0.1)"#@param {type:"string"}
-    strength_schedule = "0: (1.0), 70: (1.0), 200: (0.65), 400: (0.6), 500: (0.5)"#@param {type:"string"}
-    blend_schedule = "0: (1), 200: (1), 320: (0.6), 500: (0.1)"#@param {type:"string"}
+    strength_schedule = "0: (0.7), 400: (0.6), 500: (0.5)"#@param {type:"string"}
+    blend_schedule = "0: (0.8), 100: (0.8), 200: (0.5), 320: (0.6), 500: (0.1)"#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
-    seed_iter_frame = 500
+    seed_iter_frame = 200
 
     #@markdown ####**Coherence:**
     color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
