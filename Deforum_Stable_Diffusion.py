@@ -1672,7 +1672,11 @@ def render_animation(args, anim_args):
             frame_idx += turbo_steps
         else:    
             filename = f"{args.timestring}_{frame_idx:05}.png"
-            image.save(os.path.join(args.outdir, filename))
+            if blend > 0.9999 and strength > 0.9999:
+                orig_frame = load_cv_img(args.init_image, (args.W, args.H), use_alpha_as_mask=args.use_alpha_as_mask)
+                orig_frame.save(os.path.join(args.outdir, filename))
+            else:
+                image.save(os.path.join(args.outdir, filename))
             if anim_args.save_depth_maps:
                 if depth is None:
                     depth = depth_model.predict(sample_to_cv2(sample), anim_args)
