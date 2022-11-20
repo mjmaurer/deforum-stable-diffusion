@@ -129,7 +129,7 @@ def DeforumAnimArgs():
 
     #@markdown ####**Coherence:**
     color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
-    diffusion_cadence = '1' #@param ['1','2','3','4','5','6','7','8'] {type:'string'}
+    diffusion_cadence = '2' #@param ['1','2','3','4','5','6','7','8'] {type:'string'}
 
     #@markdown ####**3D Depth Warping:**
     use_depth_warping = True #@param {type:"boolean"}
@@ -1531,7 +1531,7 @@ def render_animation(args, anim_args):
         anim_args.save_depth_maps = False
 
     # state for interpolating between diffusion steps
-    turbo_steps = 1 if using_vid_init else int(anim_args.diffusion_cadence)
+    turbo_steps = 1 if using_vid_init and not enhanced_vid_mode else int(anim_args.diffusion_cadence)
     turbo_prev_image, turbo_prev_frame_idx = None, 0
     turbo_next_image, turbo_next_frame_idx = None, 0
 
@@ -1580,7 +1580,7 @@ def render_animation(args, anim_args):
                     assert(turbo_next_image is not None)
                     depth = depth_model.predict(turbo_next_image, anim_args)
 
-                if anim_args.animation_mode == '2D':
+                if anim_args.animation_mode == '2D' or enhanced_vid_mode:
                     if advance_prev:
                         turbo_prev_image = anim_frame_warp_2d(turbo_prev_image, args, anim_args, keys, tween_frame_idx)
                     if advance_next:
