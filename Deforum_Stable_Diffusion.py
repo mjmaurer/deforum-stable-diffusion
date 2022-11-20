@@ -159,8 +159,8 @@ def get_output_folder(viddir):
 def DeforumArgs():
     #@markdown **Image Settings**
     # !imp
-    W = 2048 / 2 #@param 720
-    H = 1152 / 2 #@param 405
+    W = 1024 # / 2 #@param 720
+    H = 576 # / 2 #@param 405
     W, H = map(lambda x: x - x % 64, (W, H))  # resize to integer multiple of 64
 
     #@markdown **Sampling Settings**
