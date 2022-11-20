@@ -5,7 +5,7 @@ ENV = os.environ
 
 vid_strength = float(ENV.get("STRENGTH", 1))
 video_file_name = ENV.get("VID_FILE", "20testzoom.mp4")
-vid_prompt = ENV.get("VID_PROMPT", "two bipedal cartoon bears walking in fall foliage in a dark forest, steampunk, high detail")
+vid_prompt = ENV.get("VID_PROMPT", "a network of branches in fall foilage, rocks, high detail, trippy")
 enhanced_vid_mode = ENV.get("VID_MODE_OFF", True)
 # Set to overwrite video inputframes if they already exist
 rewrite_video_frames = ENV.get("REWRITE_VIDEO_FRAMES", False)
@@ -117,7 +117,8 @@ def DeforumAnimArgs():
     # blend_schedule = "0: (1), 200: (1), 320: (0.6), 500: (0.1)"#@param {type:"string"}
     # I think stren should reset when we change to iter
     # TODO maybe introduce a bit of the blend. See the second vid in doc
-    switch_frame = 17 * 24
+    # switch_frame = 17 * 24
+    switch_frame = 1 
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.01)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 1}:(0), {switch_frame}:(1)" #@param {type:"string"}
     strength_schedule = f"0: (1), {switch_frame - 150}: (1), {switch_frame - 1}: (0.65), {switch_frame}: (0.75), {switch_frame + 20}: (0.5)" #@param {type:"string"}
