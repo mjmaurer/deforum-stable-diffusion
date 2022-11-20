@@ -1608,13 +1608,14 @@ def render_animation(args, anim_args):
                         turbo_next_image = anim_frame_warp_3d(turbo_next_image, depth, anim_args, keys, tween_frame_idx)
                 turbo_prev_frame_idx = turbo_next_frame_idx = tween_frame_idx
 
-                if enhanced_vid_mode and frame_idx < anim_args.seed_iter_frame:
+                use_same_frame = enhanced_vid_mode and frame_idx < anim_args.seed_iter_frame
+                if use_same_frame:
                     if advance_prev:
                         turbo_prev_image = vid_frame_cv 
                     if advance_next:
                         turbo_next_image = vid_frame_cv 
 
-                if turbo_prev_image is not None and tween < 1.0:
+                if turbo_prev_image is not None and tween < 1.0 and not use_same_frame:
                     img = turbo_prev_image*(1.0-tween) + turbo_next_image*tween
                 else:
                     img = turbo_next_image
