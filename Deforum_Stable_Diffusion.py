@@ -117,12 +117,13 @@ def DeforumAnimArgs():
     # blend_schedule = "0: (1), 200: (1), 320: (0.6), 500: (0.1)"#@param {type:"string"}
     # I think stren should reset when we change to iter
     # TODO maybe introduce a bit of the blend. See the second vid in doc
-    zoom = "0:(0), 201:(1.04)" #@param {type:"string"}
-    angle = "0:(0), 201:(1)" #@param {type:"string"}
-    strength_schedule = "0: (1), 75: (1), 200: (0.5), 201: (0.99), 220: (0.5)" #@param {type:"string"}
-    blend_schedule = "0: (1), 200: (1), 201: (0)"#@param {type:"string"}
+    switch_frame = 10 * 24 + 12
+    zoom = f"0:(0), {switch_frame}:(1.04)" #@param {type:"string"}
+    angle = f"0:(0), {switch_frame}:(1)" #@param {type:"string"}
+    strength_schedule = f"0: (1), {switch_frame - 150}: (1), {switch_frame - 1}: (0.5), {switch_frame}: (0.99), {switch_frame + 20}: (0.5)" #@param {type:"string"}
+    blend_schedule = f"0: (1), {switch_frame - 1}: (1), {switch_frame}: (0)"#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
-    seed_iter_frame = 200
+    seed_iter_frame = switch_frame - 1
 
     #@markdown ####**Coherence:**
     color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
