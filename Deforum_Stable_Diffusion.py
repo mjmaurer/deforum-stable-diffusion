@@ -1599,7 +1599,7 @@ def render_animation(args, anim_args):
 
         # apply transforms to previous frame
         if prev_sample is not None:
-            if anim_args.animation_mode == '2D':
+            if anim_args.animation_mode == '2D' or enhanced_vid_mode:
                 prev_img = anim_frame_warp_2d(sample_to_cv2(prev_sample), args, anim_args, keys, frame_idx)
             else: # '3D'
                 prev_img_cv2 = sample_to_cv2(prev_sample)
