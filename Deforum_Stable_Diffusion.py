@@ -1671,7 +1671,7 @@ def render_animation(args, anim_args):
 
         if enhanced_vid_mode and frame_idx > anim_args.seed_iter_frame:
             args.seed_behavior = 'iter' # force fix seed at the moment bc only 1 seed is available
-        if enhanced_vid_mode and frame_idx > anim_args.seed_iter_frame + 24 * 10:
+        if enhanced_vid_mode and frame_idx == anim_args.seed_iter_frame + 24 * 10:
             # Slow things down when its probably not recongizable anyway
             turbo_steps += 1
 
