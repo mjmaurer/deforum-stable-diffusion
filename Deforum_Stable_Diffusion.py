@@ -107,6 +107,7 @@ def DeforumAnimArgs():
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
     switch_frame = 5 * 24 # 34
+    coherence_switch_frame = switch_frame + 3 * 24
     strength_build = 100 # 500
     # TODO try should and long blend_build
     blend_build = 80
@@ -1681,7 +1682,7 @@ def render_animation(args, anim_args):
 
         if enhanced_vid_mode and frame_idx > anim_args.seed_iter_frame:
             args.seed_behavior = 'iter' # force fix seed at the moment bc only 1 seed is available
-        if enhanced_vid_mode and frame_idx > anim_args.seed_iter_frame + 24 * 10:
+        if enhanced_vid_mode and frame_idx > anim_args.coherence_switch_frame:
             args.color_coherence = "None"
             # color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
         if enhanced_vid_mode and frame_idx == anim_args.seed_iter_frame + 24 * 10:
