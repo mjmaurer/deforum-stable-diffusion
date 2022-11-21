@@ -237,7 +237,7 @@ args_dict = DeforumArgs()
 anim_args_dict = DeforumAnimArgs()
 
 # collage?
-main_style = "psychedelic fractals, trippy, Fujifilm XT3"
+main_style = "psychedelic, trippy, oil painting, Fujifilm XT3"
 main_prompt = f"a network of tree branches with brown-orange leaves in the forest, {main_style}"
 animation_prompts = {
     0: main_prompt,
