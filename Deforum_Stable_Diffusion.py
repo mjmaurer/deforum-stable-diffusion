@@ -1564,18 +1564,16 @@ def render_animation(args, anim_args):
 
         # grab init image for current frame
         # TODO move input frames into vid dir and try and cache
+        real_frame_idx = frame_idx
         if using_vid_init:
-            real_frame_name = max(0, frame_idx - turbo_frames_added + 1)
+            real_frame_idx = frame_idx - turbo_frames_added
+            real_frame_name = max(0, real_frame_idx + 1)
             init_frame = os.path.join(args.viddir, 'inputframes', f"{real_frame_name:05}.jpg")            
             print(f"Using video init frame {init_frame}. Frame_idx: {frame_idx}")
             args.init_image = init_frame
             if anim_args.use_mask_video:
                 mask_frame = os.path.join(args.outdir, 'maskframes', f"{real_frame_name:05}.jpg")
                 args.mask_file = mask_frame
-
-        if strength < 0.54:
-            # Slow things down when its probably not recongizable anyway
-            turbo_steps = 3
 
         vid_frame = None
         vid_frame_cv = None
@@ -1663,8 +1661,12 @@ def render_animation(args, anim_args):
                 args.init_sample = noised_sample.to(device)
             args.strength = max(0.0, min(1.0, strength))
 
-        if enhanced_vid_mode and frame_idx > anim_args.seed_iter_frame:
+        if enhanced_vid_mode and real_frame_idx > anim_args.seed_iter_frame:
             args.seed_behavior = 'iter' # force fix seed at the moment bc only 1 seed is available
+        if enhanced_vid_mode and real_frame_idx > anim_args.seed_iter_frame - 10:
+            # Slow things down when its probably not recongizable anyway
+            turbo_steps = 3
+
 
         # grab prompt for current frame
         args.prompt = prompt_series[frame_idx]
