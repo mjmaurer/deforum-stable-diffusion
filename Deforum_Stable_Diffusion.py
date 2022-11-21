@@ -114,7 +114,7 @@ def DeforumAnimArgs():
     noise_schedule = f"0: (0.02), {switch_frame - 1}:(0.02), {switch_frame}:(0.03)"#@param {type:"string"}
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.002), {switch_frame+24*10}:(1.002), {switch_frame+24*20}:(0.985)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.4), {switch_frame+24*10}:(0.4), {switch_frame+24*20}:(-0.4)" #@param {type:"string"}
-    strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: (0.52), {switch_frame + 200}: (0.6)" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
+    strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: (0.52), {switch_frame + 200}: (0.55)" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
     blend_schedule = f"0: (1), {switch_frame - blend_build}: (1), {switch_frame}: (0.95), {switch_frame + 1}: (0.025) "#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
     seed_iter_frame = switch_frame - 1
@@ -239,8 +239,8 @@ anim_args_dict = DeforumAnimArgs()
 
 # wallpaper, poster, sharp focus, hyperrealism, insanely detailed, lush detail, filigree, intricate, crystalline, perfectionism, max detail, 4k uhd, spirals, tendrils, ornate, HQ, angelic, decorations, embellishments, masterpiece, hard edge, breathtaking, embroidery
 # collage?
-main_style = "vibrant, oil painting, unreal engine, psychedelic, trippy, kilian eng"
-main_prompt = f"a web of tree branches and orange autumn leaves, {main_style}"
+main_style = "vibrant, oil painting, lush detail, psychedelic, trippy, kilian eng"
+main_prompt = f"a web of tree branches and orange leaves in fall foilage, {main_style}"
 animation_prompts = {
     0: main_prompt,
     anim_args_dict["switch_frame"] + 24 * 20: f"a pile of orange autumn leaves and branches in the forest foilage, {main_style}",
@@ -1681,9 +1681,13 @@ def render_animation(args, anim_args):
 
         if enhanced_vid_mode and frame_idx > anim_args.seed_iter_frame:
             args.seed_behavior = 'iter' # force fix seed at the moment bc only 1 seed is available
+        if enhanced_vid_mode and frame_idx > anim_args.seed_iter_frame + 24 * 10:
+            args.color_coherence = "None"
+            # color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
         if enhanced_vid_mode and frame_idx == anim_args.seed_iter_frame + 24 * 10:
             # Slow things down when its probably not recongizable anyway
-            turbo_steps += 1
+            # turbo_steps += 1
+            pass
 
 
         # grab prompt for current frame
