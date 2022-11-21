@@ -117,7 +117,7 @@ def DeforumAnimArgs():
     # blend_schedule = "0: (1), 200: (1), 320: (0.6), 500: (0.1)"#@param {type:"string"}
     # I think stren should reset when we change to iter
     # TODO maybe introduce a bit of the blend. See the second vid in doc
-    switch_frame = 4 * 24
+    switch_frame = 8 * 24
     strength_build = 70 # 150
     blend_build = 30 # 100
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.001)" #@param {type:"string"}
