@@ -1625,16 +1625,16 @@ def render_animation(args, anim_args):
                         turbo_next_image = anim_frame_warp_3d(turbo_next_image, depth, anim_args, keys, tween_frame_idx)
                 turbo_prev_frame_idx = turbo_next_frame_idx = tween_frame_idx
 
-                if turbo_prev_image is not None and tween < 1.0 and not use_same_frame:
-                    img = turbo_prev_image*(1.0-tween) + turbo_next_image*tween
-                else:
-                    img = turbo_next_image
-
-                if strength > ease_start and enhanced_vid_mode:
+                if strength > ease_start and enhanced_vid_mode and not use_same_frame:
                     # If strength is high, it means we are just starting diffusion frames, so we ease into it
                     # Might want to try before and after picking next image
                     ease_ratio = (strength - ease_start) / (1 - ease_start)
-                    img = ease_ratio * vid_frame_cv + (1.0-ease_ratio) * img
+                    turbo_next_image = ease_ratio * vid_frame_cv + (1.0-ease_ratio) * turbo_next_image
+
+                if turbo_prev_image is not None and tween < 1.0: # and not use_same_frame:
+                    img = turbo_prev_image*(1.0-tween) + turbo_next_image*tween
+                else:
+                    img = turbo_next_image
 
 
                 filename = f"{args.timestring}_{tween_frame_idx:05}.png"
