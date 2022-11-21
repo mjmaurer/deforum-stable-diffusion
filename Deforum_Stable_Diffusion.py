@@ -6,7 +6,7 @@ ENV = os.environ
 vid_strength = float(ENV.get("STRENGTH", 1))
 video_file_name = ENV.get("VID_FILE", "18test.mp4")
 vid_prompt = ENV.get("VID_PROMPT", "a vast network of brown-orange branches and leaves in the forest, Fujifilm XT3, god rays, high detail, trippy, psychedelic")
-enhanced_vid_mode = ENV.get("VID_MODE", "True") == "False"
+enhanced_vid_mode = ENV.get("VID_MODE", "True") == "True"
 # Set to overwrite video inputframes if they already exist
 rewrite_video_frames = ENV.get("REWRITE_VIDEO_FRAMES", False)
 if not ENV.get("SKIP_SETUP", False):
@@ -86,7 +86,7 @@ map_location = "cuda" #@param ["cpu", "cuda"]
 def DeforumAnimArgs():
 
     #@markdown ####**Animation:**
-    animation_mode = "2D" # 'Video Input' #@param ['None', '2D', '3D', 'Video Input', 'Interpolation'] {type:'string'}
+    animation_mode = "Video Input" # 'Video Input' #@param ['None', '2D', '3D', 'Video Input', 'Interpolation'] {type:'string'}
     max_frames = 1000 #@param {type:"number"}
     border = 'replicate' #@param ['wrap', 'replicate'] {type:'string'}
 
@@ -115,7 +115,7 @@ def DeforumAnimArgs():
     noise_schedule = f"0: (0.02), {switch_frame - 1}:(0.02), {switch_frame}:(0.03)"#@param {type:"string"}
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.002), {switch_frame+24*10}:(1.002), {switch_frame+24*20}:(0.985)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.4), {switch_frame+24*10}:(0.4), {switch_frame+24*20}:(-0.4)" #@param {type:"string"}
-    strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: (0.52), {switch_frame + 200}: (0.55)" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
+    strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: (0.52), {switch_frame + 200}: (0.5)" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
     blend_schedule = f"0: (1), {switch_frame - blend_build}: (1), {switch_frame}: (0.95), {switch_frame + 1}: (0) "#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
     seed_iter_frame = switch_frame - 1
@@ -196,7 +196,7 @@ def DeforumArgs():
     n_batch = 1 #@param
     filename_format = "{timestring}_{index}_{prompt}.png" #@param ["{timestring}_{index}_{seed}.png","{timestring}_{index}_{prompt}.png"]
     # !imp fixed for more similar images frame to frame
-    seed_behavior = "iter" #@param ["iter","fixed","random"]
+    seed_behavior = "fixed" #@param ["iter","fixed","random"]
     make_grid = False #@param {type:"boolean"}
     grid_rows = 2 #@param 
     viddir = os.path.join(output_path,batch_name)
@@ -240,7 +240,7 @@ anim_args_dict = DeforumAnimArgs()
 
 # wallpaper, poster, sharp focus, hyperrealism, insanely detailed, lush detail, filigree, intricate, crystalline, perfectionism, max detail, 4k uhd, spirals, tendrils, ornate, HQ, angelic, decorations, embellishments, masterpiece, hard edge, breathtaking, embroidery
 # collage?
-main_style = "vibrant, oil painting, lush detail, psychedelic, trippy, kilian eng"
+main_style = "vibrant, oil painting, lush detail, trippy, kilian eng"
 main_prompt = f"a web of tree branches and orange leaves in fall foilage, {main_style}"
 animation_prompts = {
     0: main_prompt,
