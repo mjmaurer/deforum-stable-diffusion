@@ -1690,7 +1690,7 @@ def render_animation(args, anim_args):
             else:
                 turbo_next_image, turbo_next_frame_idx = sample_to_cv2(sample, type=np.float32), frame_idx
             frame_idx += turbo_steps
-            turbo_frames_added += turbo_steps
+            turbo_frames_added += (turbo_steps - 1)
         else:    
             filename = f"{args.timestring}_{frame_idx:05}.png"
             if use_same_frame:
