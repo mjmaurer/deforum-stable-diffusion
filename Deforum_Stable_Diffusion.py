@@ -1568,9 +1568,9 @@ def render_animation(args, anim_args):
         # grab init image for current frame
         # TODO move input frames into vid dir and try and cache
         if using_vid_init:
-            real_frame_name = max(0, frame_idx - int(anim_args.diffusion_cadence)) + 1
+            real_frame_name = max(0, frame_idx - turbo_steps) + 1
             init_frame = os.path.join(args.viddir, 'inputframes', f"{real_frame_name:05}.jpg")            
-            print(f"Using video init frame {init_frame}")
+            print(f"Using video init frame {init_frame}. Frame_idx: {frame_idx}")
             args.init_image = init_frame
             if anim_args.use_mask_video:
                 mask_frame = os.path.join(args.outdir, 'maskframes', f"{real_frame_name:05}.jpg")
@@ -1581,6 +1581,8 @@ def render_animation(args, anim_args):
         if using_vid_init and enhanced_vid_mode:
             vid_frame, mask = load_img(args.init_image, (args.W, args.H), use_alpha_as_mask=args.use_alpha_as_mask)
             vid_frame_cv = sample_to_cv2(vid_frame, type=np.float64)
+
+        use_same_frame = enhanced_vid_mode and frame_idx < anim_args.seed_iter_frame and blend > 0.9999 and strength > 0.9999
 
         # emit in-between frames
         # turbo_steps = 1 for vid input 
@@ -1597,7 +1599,12 @@ def render_animation(args, anim_args):
                     assert(turbo_next_image is not None)
                     depth = depth_model.predict(turbo_next_image, anim_args)
 
-                if anim_args.animation_mode == '2D' or enhanced_vid_mode:
+                if use_same_frame:
+                    if advance_prev:
+                        turbo_prev_image = vid_frame_cv 
+                    if advance_next:
+                        turbo_next_image = vid_frame_cv 
+                elif anim_args.animation_mode == '2D' or enhanced_vid_mode:
                     if advance_prev:
                         turbo_prev_image = anim_frame_warp_2d(turbo_prev_image, args, anim_args, keys, tween_frame_idx)
                     if advance_next:
@@ -1608,13 +1615,6 @@ def render_animation(args, anim_args):
                     if advance_next:
                         turbo_next_image = anim_frame_warp_3d(turbo_next_image, depth, anim_args, keys, tween_frame_idx)
                 turbo_prev_frame_idx = turbo_next_frame_idx = tween_frame_idx
-
-                use_same_frame = enhanced_vid_mode and frame_idx < anim_args.seed_iter_frame
-                if use_same_frame:
-                    if advance_prev:
-                        turbo_prev_image = vid_frame_cv 
-                    if advance_next:
-                        turbo_next_image = vid_frame_cv 
 
                 if turbo_prev_image is not None and tween < 1.0 and not use_same_frame:
                     img = turbo_prev_image*(1.0-tween) + turbo_next_image*tween
@@ -1675,17 +1675,23 @@ def render_animation(args, anim_args):
             print(f"Rx: {keys.rotation_3d_x_series[frame_idx]} Ry: {keys.rotation_3d_y_series[frame_idx]} Rz: {keys.rotation_3d_z_series[frame_idx]}")
 
         # sample the diffusion model
-        sample, image = generate(args, frame_idx, return_latent=False, return_sample=True)
+        sample = vid_frame
+        image = None
+        if not use_same_frame: 
+            sample, image = generate(args, frame_idx, return_latent=False, return_sample=True)
         if not using_vid_init or enhanced_vid_mode:
             prev_sample = sample
 
         if turbo_steps > 1:
             turbo_prev_image, turbo_prev_frame_idx = turbo_next_image, turbo_next_frame_idx
-            turbo_next_image, turbo_next_frame_idx = sample_to_cv2(sample, type=np.float32), frame_idx
+            if use_same_frame:
+                turbo_next_image, turbo_next_frame_idx = vid_frame_cv, frame_idx
+            else:
+                turbo_next_image, turbo_next_frame_idx = sample_to_cv2(sample, type=np.float32), frame_idx
             frame_idx += turbo_steps
         else:    
             filename = f"{args.timestring}_{frame_idx:05}.png"
-            if blend > 0.9999 and strength > 0.9999:
+            if use_same_frame:
                 orig_frame = load_cv_img(args.init_image, (args.W, args.H), use_alpha_as_mask=args.use_alpha_as_mask)
                 orig_frame.save(os.path.join(args.outdir, filename))
             else:
