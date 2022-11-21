@@ -86,7 +86,7 @@ map_location = "cuda" #@param ["cpu", "cuda"]
 def DeforumAnimArgs():
 
     #@markdown ####**Animation:**
-    animation_mode = 'Video Input' #@param ['None', '2D', '3D', 'Video Input', 'Interpolation'] {type:'string'}
+    animation_mode = "2D" # 'Video Input' #@param ['None', '2D', '3D', 'Video Input', 'Interpolation'] {type:'string'}
     max_frames = 1000 #@param {type:"number"}
     border = 'replicate' #@param ['wrap', 'replicate'] {type:'string'}
 
