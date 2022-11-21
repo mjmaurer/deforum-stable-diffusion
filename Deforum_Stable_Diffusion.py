@@ -237,11 +237,11 @@ args_dict = DeforumArgs()
 anim_args_dict = DeforumAnimArgs()
 
 
-main_prompt = "a vast network of brown-orange branches and leaves in the forest, Fujifilm XT3, god rays, high detail, trippy, psychedelic"
+main_prompt = "a web of brown-orange branches and leaves in the forest, Fujifilm XT3, diffused lighting, trippy, psychedelic, high detail"
 animation_prompts = {
     0: main_prompt,
-    anim_args_dict["switch_frame"] + 24 * 6: "a clearing of brown-orange leaves in the forest, Fujifilm XT3, god rays, high detail, trippy, psychedelic",
-    anim_args_dict["switch_frame"] + 24 * 12: "leaving a brown-orange forest and looking at the sky, Fujifilm XT3, god rays, high detail, trippy, psychedelic",
+    anim_args_dict["switch_frame"] + 24 * 6: "a clearing of brown-orange leaves in the forest, Fujifilm XT3, diffused lighting, trippy, psychedelic, high detail",
+    anim_args_dict["switch_frame"] + 24 * 12: "leaving a brown-orange forest and looking at the sky, Fujifilm XT3, diffused lighting, trippy, psychedelic, high detail",
     # 20: "a beautiful banana, trending on Artstation",
     # 30: "a beautiful coconut, trending on Artstation",
     # 40: "a beautiful durian, trending on Artstation",
