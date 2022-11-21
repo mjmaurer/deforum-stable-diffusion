@@ -1534,6 +1534,7 @@ def render_animation(args, anim_args):
     turbo_steps = 1 if using_vid_init and not enhanced_vid_mode else int(anim_args.diffusion_cadence)
     turbo_prev_image, turbo_prev_frame_idx = None, 0
     turbo_next_image, turbo_next_frame_idx = None, 0
+    turbo_frames_added = 0
 
     # resume animation
     prev_sample = None
@@ -1568,7 +1569,7 @@ def render_animation(args, anim_args):
         # grab init image for current frame
         # TODO move input frames into vid dir and try and cache
         if using_vid_init:
-            real_frame_name = max(0, frame_idx - turbo_steps) + 1
+            real_frame_name = max(0, frame_idx - turbo_frames_added + 1)
             init_frame = os.path.join(args.viddir, 'inputframes', f"{real_frame_name:05}.jpg")            
             print(f"Using video init frame {init_frame}. Frame_idx: {frame_idx}")
             args.init_image = init_frame
@@ -1689,6 +1690,7 @@ def render_animation(args, anim_args):
             else:
                 turbo_next_image, turbo_next_frame_idx = sample_to_cv2(sample, type=np.float32), frame_idx
             frame_idx += turbo_steps
+            turbo_frames_added += turbo_steps
         else:    
             filename = f"{args.timestring}_{frame_idx:05}.png"
             if use_same_frame:
