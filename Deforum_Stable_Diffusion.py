@@ -114,8 +114,8 @@ def DeforumAnimArgs():
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
     noise_schedule = "0: (0.02)"#@param {type:"string"}
     switch_frame = 14 * 24
-    strength_build = 120 # 150
-    blend_build = 50 # 100
+    strength_build = 200 # 150
+    blend_build = 80 # 100
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.005)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.5)" #@param {type:"string"}
     strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame - 1}: (0.5), {switch_frame + 200}: (0.6)" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
