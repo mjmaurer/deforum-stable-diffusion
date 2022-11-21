@@ -106,16 +106,16 @@ def DeforumAnimArgs():
     perspective_flip_phi = "0:(t%15)"#@param {type:"string"}
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
-    switch_on = False
+    switch_on = True
     switch_frame = 34 * 24 # 34
     coherence_switch_frame = 0 # switch_frame + 1 * 24
-    strength_build = 500 # 500
+    strength_build = 350 # 500
     # TODO try should and long blend_build
     blend_build = 80 # 80
     blend_goal = "0.95"
     strength_goal = "0.6" # .52
     ease_start = 0.72
-    noise_schedule = f"0: (0.02)" #@param {type:"string"}
+    noise_schedule = f"0: (0.02), {switch_frame}: (0.02), {switch_frame + 1}: (0.08)" #@param {type:"string"}
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.001), {switch_frame+24*10}:(1.001), {switch_frame+24*20}:(0.985)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.4), {switch_frame+24*10}:(0.4), {switch_frame+24*20}:(-0.4)" #@param {type:"string"}
     strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: ({strength_goal}), {switch_frame + 200}: ({strength_goal})" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
