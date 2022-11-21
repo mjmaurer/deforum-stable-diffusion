@@ -1684,7 +1684,7 @@ def render_animation(args, anim_args):
         if enhanced_vid_mode and frame_idx > anim_args.seed_iter_frame:
             args.seed_behavior = 'iter' # force fix seed at the moment bc only 1 seed is available
         if enhanced_vid_mode and frame_idx > anim_args.coherence_switch_frame:
-            args.color_coherence = "None"
+            anim_args.color_coherence = "None"
             # color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
         if enhanced_vid_mode and frame_idx == anim_args.seed_iter_frame + 24 * 10:
             # Slow things down when its probably not recongizable anyway
