@@ -106,12 +106,13 @@ def DeforumAnimArgs():
     perspective_flip_phi = "0:(t%15)"#@param {type:"string"}
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
-    switch_frame = 11 * 24
-    strength_build = 220 # 150
+    switch_frame = 14 * 24
+    strength_build = 250 # 150
     # TODO try should and long blend_build
     blend_build = 80 # 100
+    ease_start = 0.72
     noise_schedule = f"0: (0.02), {switch_frame - 1}:(0.02), {switch_frame}:(0.03)"#@param {type:"string"}
-    zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.005), {switch_frame+24*15}:(-0.97)" #@param {type:"string"}
+    zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.005), {switch_frame+24*15}:(0.97)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.4)" #@param {type:"string"}
     strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: (0.52), {switch_frame + 200}: (0.58)" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
     blend_schedule = f"0: (1), {switch_frame - blend_build}: (1), {switch_frame}: (0.95), {switch_frame + 1}: (0.05) "#@param {type:"string"}
@@ -1559,6 +1560,7 @@ def render_animation(args, anim_args):
             turbo_prev_image, turbo_prev_frame_idx = turbo_next_image, turbo_next_frame_idx
             start_frame = last_frame+turbo_steps
 
+    ease_start = anim_args.ease_start 
     # !frameloop
     args.n_samples = 1
     frame_idx = start_frame
@@ -1628,7 +1630,6 @@ def render_animation(args, anim_args):
                 else:
                     img = turbo_next_image
 
-                ease_start = 0.8
                 if strength > ease_start and enhanced_vid_mode:
                     # If strength is high, it means we are just starting diffusion frames, so we ease into it
                     # Might want to try before and after picking next image
@@ -1717,7 +1718,15 @@ def render_animation(args, anim_args):
                 orig_frame.save(os.path.join(args.outdir, filename))
             else:
                 # TODO this doesn't use ease_ratio
-                image.save(os.path.join(args.outdir, filename))
+
+                img = sample_to_cv2(sample, type=np.float32)
+                if strength > ease_start and enhanced_vid_mode:
+                    # If strength is high, it means we are just starting diffusion frames, so we ease into it
+                    # Might want to try before and after picking next image
+                    ease_ratio = (strength - ease_start) / (1 - ease_start)
+                    img = ease_ratio * vid_frame_cv + (1.0-ease_ratio) * img 
+                cv2.imwrite(os.path.join(args.outdir, filename), cv2.cvtColor(img.astype(np.uint8), cv2.COLOR_RGB2BGR))
+                # image.save(os.path.join(args.outdir, filename))
             if anim_args.save_depth_maps:
                 if depth is None:
                     depth = depth_model.predict(sample_to_cv2(sample), anim_args)
