@@ -5,7 +5,7 @@ ENV = os.environ
 
 vid_strength = float(ENV.get("STRENGTH", 1))
 video_file_name = ENV.get("VID_FILE", "19testvid.mp4")
-vid_prompt = ENV.get("VID_PROMPT", "a web of brown-orange branches and leaves in the forest, oil painting, high detail, trippy, psychedelic")
+vid_prompt = ENV.get("VID_PROMPT", "a vast network of brown-orange branches and leaves in the forest, Fujifilm XT3, god rays, high detail, trippy, psychedelic")
 enhanced_vid_mode = ENV.get("VID_MODE_OFF", True)
 # Set to overwrite video inputframes if they already exist
 rewrite_video_frames = ENV.get("REWRITE_VIDEO_FRAMES", False)
@@ -1665,7 +1665,7 @@ def render_animation(args, anim_args):
 
         if enhanced_vid_mode and frame_idx > anim_args.seed_iter_frame:
             args.seed_behavior = 'iter' # force fix seed at the moment bc only 1 seed is available
-        if enhanced_vid_mode and frame_idx > anim_args.seed_iter_frame + 50:
+        if enhanced_vid_mode and frame_idx > anim_args.seed_iter_frame + 24 * 10:
             # Slow things down when its probably not recongizable anyway
             turbo_steps += 1
 
