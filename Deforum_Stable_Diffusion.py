@@ -122,7 +122,7 @@ def DeforumAnimArgs():
 
     #@markdown ####**Coherence:**
     color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
-    diffusion_cadence = '2' #@param ['1','2','3','4','5','6','7','8'] {type:'string'}
+    diffusion_cadence = '1' #@param ['1','2','3','4','5','6','7','8'] {type:'string'}
 
     #@markdown ####**3D Depth Warping:**
     use_depth_warping = True #@param {type:"boolean"}
