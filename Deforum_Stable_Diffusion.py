@@ -236,11 +236,12 @@ def DeforumArgs():
 args_dict = DeforumArgs()
 anim_args_dict = DeforumAnimArgs()
 
+# collage?
 main_style = "psychedelic fractals, high detail, trippy, Fujifilm XT3"
 main_prompt = f"a web of branches with brown-orange leaves in the forest, {main_style}"
 animation_prompts = {
     0: main_prompt,
-    anim_args_dict["switch_frame"] + 24 * 6: f"a clearing of brown-orange leaves in the forest, {main_style}",
+    anim_args_dict["switch_frame"] + 24 * 6: f"texture pattern of brown-orange leaves, {main_style}",
     anim_args_dict["switch_frame"] + 24 * 12: f"leaving a brown-orange forest and looking at the sky, {main_style}",
     # 20: "a beautiful banana, trending on Artstation",
     # 30: "a beautiful coconut, trending on Artstation",
