@@ -1568,11 +1568,11 @@ def render_animation(args, anim_args):
         # grab init image for current frame
         # TODO move input frames into vid dir and try and cache
         if using_vid_init:
-            init_frame = os.path.join(args.viddir, 'inputframes', f"{frame_idx+1:05}.jpg")            
+            init_frame = os.path.join(args.viddir, 'inputframes', f"{(frame_idx - int(anim_args.diffusion_cadence)):05}.jpg")            
             print(f"Using video init frame {init_frame}")
             args.init_image = init_frame
             if anim_args.use_mask_video:
-                mask_frame = os.path.join(args.outdir, 'maskframes', f"{frame_idx+1:05}.jpg")
+                mask_frame = os.path.join(args.outdir, 'maskframes', f"{(frame_idx - int(anim_args.diffusion_cadence)):05}.jpg")
                 args.mask_file = mask_frame
 
         vid_frame = None
