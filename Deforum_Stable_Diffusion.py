@@ -121,7 +121,7 @@ def DeforumAnimArgs():
     strength_build = 70 # 150
     blend_build = 30 # 100
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.001)" #@param {type:"string"}
-    angle = f"0:(0), {switch_frame - 1}:(0), {switch_frame}:(1)" #@param {type:"string"}
+    angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.5)" #@param {type:"string"}
     strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame - 1}: (0.4), {switch_frame + 200}: (0.55)" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
     blend_schedule = f"0: (1), {switch_frame - blend_build}: (1), {switch_frame - 1}: (0.95), {switch_frame}: (0) "#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
