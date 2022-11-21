@@ -111,10 +111,10 @@ def DeforumAnimArgs():
     # TODO try should and long blend_build
     blend_build = 80 # 100
     noise_schedule = f"0: (0.02), {switch_frame - 1}:(0.02), {switch_frame}:(0.03)"#@param {type:"string"}
-    zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.005)" #@param {type:"string"}
+    zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.005), {switch_frame+24*15}:(-0.97)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.4)" #@param {type:"string"}
     strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: (0.52), {switch_frame + 200}: (0.58)" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
-    blend_schedule = f"0: (1), {switch_frame - blend_build}: (1), {switch_frame}: (0.95), {switch_frame + 1}: (0) "#@param {type:"string"}
+    blend_schedule = f"0: (1), {switch_frame - blend_build}: (1), {switch_frame}: (0.95), {switch_frame + 1}: (0.05) "#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
     seed_iter_frame = switch_frame - 1
 
@@ -238,12 +238,12 @@ anim_args_dict = DeforumAnimArgs()
 
 # wallpaper, poster, sharp focus, hyperrealism, insanely detailed, lush detail, filigree, intricate, crystalline, perfectionism, max detail, 4k uhd, spirals, tendrils, ornate, HQ, angelic, decorations, embellishments, masterpiece, hard edge, breathtaking, embroidery
 # collage?
-main_style = "psychedelic, wallpaper, oil painting"
-main_prompt = f"a web of tree branches with big brown-orange leaves, {main_style}"
+main_style = "high detail, oil painting, psychedelic, trippy, kilian eng"
+main_prompt = f"a web of tree branches and brown-orange leaves, {main_style}"
 animation_prompts = {
     0: main_prompt,
-    anim_args_dict["switch_frame"] + 24 * 6: f"texture of brown-orange leaves, {main_style}",
-    anim_args_dict["switch_frame"] + 24 * 12: f"leaving a brown-orange forest and looking at the sky, {main_style}",
+    anim_args_dict["switch_frame"] + 24 * 6: f"a pile of brown-orange leaves, {main_style}",
+    anim_args_dict["switch_frame"] + 24 * 12: f"the gears of nature turning in a forest, {main_style}",
     # 20: "a beautiful banana, trending on Artstation",
     # 30: "a beautiful coconut, trending on Artstation",
     # 40: "a beautiful durian, trending on Artstation",
