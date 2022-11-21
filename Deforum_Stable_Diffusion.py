@@ -5,7 +5,7 @@ ENV = os.environ
 
 vid_strength = float(ENV.get("STRENGTH", 1))
 video_file_name = ENV.get("VID_FILE", "19testvid.mp4")
-vid_prompt = ENV.get("VID_PROMPT", "a pile of orange-brown tree branches and leaves in forest foilage, oil painting, high detail, trippy, psychedelic")
+vid_prompt = ENV.get("VID_PROMPT", "a web of brown-orange branches and leaves, oil painting, high detail, trippy, psychedelic")
 enhanced_vid_mode = ENV.get("VID_MODE_OFF", True)
 # Set to overwrite video inputframes if they already exist
 rewrite_video_frames = ENV.get("REWRITE_VIDEO_FRAMES", False)
@@ -1747,7 +1747,7 @@ def render_input_video(args, anim_args):
         vid2frames(anim_args.video_init_path, video_in_frame_path, anim_args.extract_nth_frame, anim_args.overwrite_extracted_frames)
 
     # determine max frames from length of input frames
-    anim_args.max_frames = len([f for f in pathlib.Path(video_in_frame_path).glob('*.jpg')])
+    anim_args.max_frames = len([f for f in pathlib.Path(video_in_frame_path).glob('*.jpg')]) * int(anim_args.diffusion_cadence)
     args.use_init = True
     print(f"Loading {anim_args.max_frames} input frames from {video_in_frame_path} and saving video frames to {args.outdir}")
 
