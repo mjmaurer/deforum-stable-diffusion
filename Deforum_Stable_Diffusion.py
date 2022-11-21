@@ -1734,14 +1734,14 @@ def render_animation(args, anim_args):
             else:
                 # TODO this doesn't use ease_ratio
 
-                img = sample_to_cv2(sample, type=np.float32)
-                if strength > ease_start and enhanced_vid_mode:
-                    # If strength is high, it means we are just starting diffusion frames, so we ease into it
-                    # Might want to try before and after picking next image
-                    ease_ratio = (strength - ease_start) / (1 - ease_start)
-                    img = ease_ratio * vid_frame_cv + (1.0-ease_ratio) * img 
-                cv2.imwrite(os.path.join(args.outdir, filename), cv2.cvtColor(img.astype(np.uint8), cv2.COLOR_RGB2BGR))
-                # image.save(os.path.join(args.outdir, filename))
+                # img = sample_to_cv2(sample, type=np.float32)
+                # if strength > ease_start and enhanced_vid_mode:
+                #     # If strength is high, it means we are just starting diffusion frames, so we ease into it
+                #     # Might want to try before and after picking next image
+                #     ease_ratio = (strength - ease_start) / (1 - ease_start)
+                #     img = ease_ratio * vid_frame_cv + (1.0-ease_ratio) * img 
+                # cv2.imwrite(os.path.join(args.outdir, filename), cv2.cvtColor(img.astype(np.uint8), cv2.COLOR_RGB2BGR))
+                image.save(os.path.join(args.outdir, filename))
             if anim_args.save_depth_maps:
                 if depth is None:
                     depth = depth_model.predict(sample_to_cv2(sample), anim_args)
