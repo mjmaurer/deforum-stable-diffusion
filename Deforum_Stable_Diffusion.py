@@ -239,7 +239,7 @@ anim_args_dict = DeforumAnimArgs()
 
 # wallpaper, poster, sharp focus, hyperrealism, insanely detailed, lush detail, filigree, intricate, crystalline, perfectionism, max detail, 4k uhd, spirals, tendrils, ornate, HQ, angelic, decorations, embellishments, masterpiece, hard edge, breathtaking, embroidery
 # collage?
-main_style = "high detail, oil painting, psychedelic, trippy, kilian eng"
+main_style = "vibrant, oil painting, unreal engine, psychedelic, trippy, kilian eng"
 main_prompt = f"a web of tree branches and brown-orange leaves, {main_style}"
 animation_prompts = {
     0: main_prompt,
