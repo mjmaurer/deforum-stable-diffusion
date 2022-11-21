@@ -4,7 +4,7 @@ from keyframes import Keyframe, Scene
 ENV = os.environ
 
 vid_strength = float(ENV.get("STRENGTH", 1))
-video_file_name = ENV.get("VID_FILE", "17test.mp4")
+video_file_name = ENV.get("VID_FILE", "18test.mp4")
 vid_prompt = ENV.get("VID_PROMPT", "a vast network of brown-orange branches and leaves in the forest, Fujifilm XT3, god rays, high detail, trippy, psychedelic")
 enhanced_vid_mode = ENV.get("VID_MODE_OFF", True)
 # Set to overwrite video inputframes if they already exist
@@ -106,8 +106,8 @@ def DeforumAnimArgs():
     perspective_flip_phi = "0:(t%15)"#@param {type:"string"}
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
-    switch_frame = 14 * 24
-    strength_build = 250 # 150
+    switch_frame = 25 * 24
+    strength_build = 350 # 150
     # TODO try should and long blend_build
     blend_build = 80 # 100
     ease_start = 0.72
