@@ -106,11 +106,11 @@ def DeforumAnimArgs():
     perspective_flip_phi = "0:(t%15)"#@param {type:"string"}
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
-    noise_schedule = "0: (0.02)"#@param {type:"string"}
     switch_frame = 30 * 24
     strength_build = 276 # 150
     # TODO try should and long blend_build
     blend_build = 80 # 100
+    noise_schedule = f"0: (0.02), {switch_frame - 1}:(0.02), {switch_frame}:(0.03)"#@param {type:"string"}
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.005)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.4)" #@param {type:"string"}
     strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: (0.52), {switch_frame + 200}: (0.58)" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
@@ -1623,10 +1623,17 @@ def render_animation(args, anim_args):
                         turbo_next_image = anim_frame_warp_3d(turbo_next_image, depth, anim_args, keys, tween_frame_idx)
                 turbo_prev_frame_idx = turbo_next_frame_idx = tween_frame_idx
 
-                if turbo_prev_image is not None and tween < 1.0 and not use_same_frame:
+                if turbo_prev_image is not None and tween < 1.0: # and not use_same_frame:
                     img = turbo_prev_image*(1.0-tween) + turbo_next_image*tween
                 else:
                     img = turbo_next_image
+
+                ease_start = 0.8
+                if strength > ease_start and enhanced_vid_mode:
+                    # If strength is high, it means we are just starting diffusion frames, so we ease into it
+                    # Might want to try before and after picking next image
+                    ease_ratio = (strength - ease_start) / (1 - ease_start)
+                    img = ease_ratio * vid_frame_cv + (1.0-ease_ratio) * img
 
 
                 filename = f"{args.timestring}_{tween_frame_idx:05}.png"
@@ -1709,6 +1716,7 @@ def render_animation(args, anim_args):
                 orig_frame = load_cv_img(args.init_image, (args.W, args.H), use_alpha_as_mask=args.use_alpha_as_mask)
                 orig_frame.save(os.path.join(args.outdir, filename))
             else:
+                # TODO this doesn't use ease_ratio
                 image.save(os.path.join(args.outdir, filename))
             if anim_args.save_depth_maps:
                 if depth is None:
