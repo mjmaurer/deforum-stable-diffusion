@@ -240,10 +240,10 @@ anim_args_dict = DeforumAnimArgs()
 # wallpaper, poster, sharp focus, hyperrealism, insanely detailed, lush detail, filigree, intricate, crystalline, perfectionism, max detail, 4k uhd, spirals, tendrils, ornate, HQ, angelic, decorations, embellishments, masterpiece, hard edge, breathtaking, embroidery
 # collage?
 main_style = "vibrant, oil painting, unreal engine, psychedelic, trippy, kilian eng"
-main_prompt = f"a web of tree branches and brown-orange leaves, {main_style}"
+main_prompt = f"a web of tree branches and orange autumn leaves, {main_style}"
 animation_prompts = {
     0: main_prompt,
-    anim_args_dict["switch_frame"] + 24 * 20: f"a pile of brown-orange leaves and branches in the forest foilage, {main_style}",
+    anim_args_dict["switch_frame"] + 24 * 20: f"a pile of orange autumn leaves and branches in the forest foilage, {main_style}",
     anim_args_dict["switch_frame"] + 24 * 40: f"the gears of nature turning in a forest, {main_style}",
     # 20: "a beautiful banana, trending on Artstation",
     # 30: "a beautiful coconut, trending on Artstation",
