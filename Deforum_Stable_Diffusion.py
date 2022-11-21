@@ -62,12 +62,6 @@ from torch import autocast
 import re
 from scipy.ndimage import gaussian_filter
 
-animation_prompts = {
-    0: vid_prompt 
-    # 20: "a beautiful banana, trending on Artstation",
-    # 30: "a beautiful coconut, trending on Artstation",
-    # 40: "a beautiful durian, trending on Artstation",
-}
 base = "/storage/deforumsd"
 input_base = f"{base}/input"
 batch_name = video_file_name.split(".")[0] # "StableFun" #@param {type:"string"}
@@ -241,6 +235,17 @@ def DeforumArgs():
 
 args_dict = DeforumArgs()
 anim_args_dict = DeforumAnimArgs()
+
+
+main_prompt = "a vast network of brown-orange branches and leaves in the forest, Fujifilm XT3, god rays, high detail, trippy, psychedelic"
+animation_prompts = {
+    0: main_prompt,
+    anim_args_dict["switch_frame"] + 24 * 6: "a clearing of brown-orange leaves in the forest, Fujifilm XT3, god rays, high detail, trippy, psychedelic",
+    anim_args_dict["switch_frame"] + 24 * 12: "leaving a brown-orange forest and looking at the sky, Fujifilm XT3, god rays, high detail, trippy, psychedelic",
+    # 20: "a beautiful banana, trending on Artstation",
+    # 30: "a beautiful coconut, trending on Artstation",
+    # 40: "a beautiful durian, trending on Artstation",
+}
 
 override_settings_with_file = False #@param {type:"boolean"}
 custom_settings_file = f"{base}/drive/MyDrive/Settings.txt"#@param {type:"string"}
