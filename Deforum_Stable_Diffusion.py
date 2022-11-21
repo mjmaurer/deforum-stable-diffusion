@@ -1485,7 +1485,7 @@ def render_animation(args, anim_args):
     # animations use key framed prompts
     args.prompts = animation_prompts
     import json
-    if anim_args.get("ffmpeg_cmd", None):
+    if enhanced_vid_mode:
         with open(os.path.join(args.outdir, '00_ffmpeg.txt'), 'w') as fp:
             fp.write(anim_args.ffmpeg_cmd)
     with open(os.path.join(args.outdir, '00_prompt.txt'), 'w') as fp:
