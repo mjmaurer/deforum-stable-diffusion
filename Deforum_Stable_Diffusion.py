@@ -196,7 +196,7 @@ def DeforumArgs():
     n_batch = 1 #@param
     filename_format = "{timestring}_{index}_{prompt}.png" #@param ["{timestring}_{index}_{seed}.png","{timestring}_{index}_{prompt}.png"]
     # !imp fixed for more similar images frame to frame
-    seed_behavior = "fixed" #@param ["iter","fixed","random"]
+    seed_behavior = "iter" #@param ["iter","fixed","random"]
     make_grid = False #@param {type:"boolean"}
     grid_rows = 2 #@param 
     viddir = os.path.join(output_path,batch_name)
@@ -1485,8 +1485,9 @@ def render_animation(args, anim_args):
     # animations use key framed prompts
     args.prompts = animation_prompts
     import json
-    with open(os.path.join(args.outdir, '00_ffmpeg.txt'), 'w') as fp:
-        fp.write(anim_args.ffmpeg_cmd)
+    if anim_args.get("ffmpeg_cmd", None):
+        with open(os.path.join(args.outdir, '00_ffmpeg.txt'), 'w') as fp:
+            fp.write(anim_args.ffmpeg_cmd)
     with open(os.path.join(args.outdir, '00_prompt.txt'), 'w') as fp:
         json.dump(args.prompts, fp)
 
