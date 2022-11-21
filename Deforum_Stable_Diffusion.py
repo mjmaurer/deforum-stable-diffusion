@@ -78,7 +78,7 @@ custom_config_path = "" #@param {type:"string"}
 custom_checkpoint_path = "" #@param {type:"string"}
 
 load_on_run_all = True #@param {type: 'boolean'}
-half_precision = True # check
+half_precision = False # check
 check_sha256 = True #@param {type:"boolean"}
 
 map_location = "cuda" #@param ["cpu", "cuda"]
