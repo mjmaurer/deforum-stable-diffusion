@@ -236,8 +236,8 @@ def DeforumArgs():
 args_dict = DeforumArgs()
 anim_args_dict = DeforumAnimArgs()
 
-main_style = "Fujifilm XT3, diffused lighting, vivid color, trippy, psychedelic, high detail"
-main_prompt = f"a web of brown-orange branches and leaves in the forest, {main_style}"
+main_style = "psychedelic, vivid color, diffused lighting, trippy, Fujifilm XT3, high detail"
+main_prompt = f"a web of branches with brown-orange leaves in the forest, {main_style}"
 animation_prompts = {
     0: main_prompt,
     anim_args_dict["switch_frame"] + 24 * 6: f"a clearing of brown-orange leaves in the forest, {main_style}",
