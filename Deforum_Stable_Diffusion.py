@@ -107,7 +107,7 @@ def DeforumAnimArgs():
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
     switch_frame = 5 * 24 # 34
-    coherence_switch_frame = switch_frame + 2 * 24
+    coherence_switch_frame = switch_frame + 1 * 24
     strength_build = 100 # 500
     # TODO try should and long blend_build
     blend_build = 80
@@ -116,7 +116,7 @@ def DeforumAnimArgs():
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.002), {switch_frame+24*10}:(1.002), {switch_frame+24*20}:(0.985)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.4), {switch_frame+24*10}:(0.4), {switch_frame+24*20}:(-0.4)" #@param {type:"string"}
     strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: (0.52), {switch_frame + 200}: (0.55)" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
-    blend_schedule = f"0: (1), {switch_frame - blend_build}: (1), {switch_frame}: (0.95), {switch_frame + 1}: (0.1) "#@param {type:"string"}
+    blend_schedule = f"0: (1), {switch_frame - blend_build}: (1), {switch_frame}: (0.95), {switch_frame + 1}: (0) "#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
     seed_iter_frame = switch_frame - 1
 
@@ -1667,7 +1667,7 @@ def render_animation(args, anim_args):
             # apply frame noising
             blend_sample = contrast_sample
             # !blend
-            if enhanced_vid_mode:
+            if enhanced_vid_mode and blend > 0.001:
                 blend_sample = cv2.addWeighted(vid_frame_cv, blend, contrast_sample, 1 - blend, 0)
             noised_sample = add_noise(sample_from_cv2(blend_sample), noise)
 
