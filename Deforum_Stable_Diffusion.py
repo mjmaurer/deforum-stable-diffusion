@@ -107,7 +107,7 @@ def DeforumAnimArgs():
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
     switch_frame = 5 * 24 # 34
-    coherence_switch_frame = switch_frame + 3 * 24
+    coherence_switch_frame = switch_frame + 2 * 24
     strength_build = 100 # 500
     # TODO try should and long blend_build
     blend_build = 80
@@ -1659,6 +1659,7 @@ def render_animation(args, anim_args):
                 if color_match_sample is None:
                     color_match_sample = prev_img.copy()
                 else:
+                    # TODO color blend
                     prev_img = maintain_colors(prev_img, color_match_sample, anim_args.color_coherence)
 
             # apply scaling
