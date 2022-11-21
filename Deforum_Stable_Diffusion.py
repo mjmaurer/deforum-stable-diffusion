@@ -115,10 +115,11 @@ def DeforumAnimArgs():
     noise_schedule = "0: (0.02)"#@param {type:"string"}
     switch_frame = 14 * 24
     strength_build = 250 # 150
-    blend_build = 100 # 100
+    # TODO try should and long blend_build
+    blend_build = 1 # 100
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.005)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.5)" #@param {type:"string"}
-    strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: (0.48), {switch_frame + 200}: (0.58)" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
+    strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: (0.45), {switch_frame + 200}: (0.6)" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
     blend_schedule = f"0: (1), {switch_frame - blend_build}: (1), {switch_frame}: (0.95), {switch_frame + 1}: (0) "#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
     seed_iter_frame = switch_frame - 1
