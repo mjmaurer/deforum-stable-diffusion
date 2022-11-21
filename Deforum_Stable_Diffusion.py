@@ -112,8 +112,8 @@ def DeforumAnimArgs():
     # TODO try should and long blend_build
     blend_build = 5 # 80
     ease_start = 0.72
-    noise_schedule = f"0: (0.02), {switch_frame - 1}:(0.02), {switch_frame}:(0.03)"#@param {type:"string"}
-    zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.002), {switch_frame+24*10}:(1.002), {switch_frame+24*20}:(0.985)" #@param {type:"string"}
+    noise_schedule = f"0: (0.02)" #@param {type:"string"}
+    zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.001), {switch_frame+24*10}:(1.001), {switch_frame+24*20}:(0.985)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.4), {switch_frame+24*10}:(0.4), {switch_frame+24*20}:(-0.4)" #@param {type:"string"}
     strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: (0.52), {switch_frame + 200}: (0.5)" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
     blend_schedule = f"0: (1), {switch_frame - blend_build}: (1), {switch_frame}: (0.95), {switch_frame + 1}: (0) "#@param {type:"string"}
@@ -122,7 +122,7 @@ def DeforumAnimArgs():
 
     #@markdown ####**Coherence:**
     color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
-    diffusion_cadence = '1' #@param ['1','2','3','4','5','6','7','8'] {type:'string'}
+    diffusion_cadence = '2' #@param ['1','2','3','4','5','6','7','8'] {type:'string'}
 
     #@markdown ####**3D Depth Warping:**
     use_depth_warping = True #@param {type:"boolean"}
@@ -1685,8 +1685,10 @@ def render_animation(args, anim_args):
 
         if enhanced_vid_mode and frame_idx > anim_args.seed_iter_frame:
             args.seed_behavior = 'iter' # force fix seed at the moment bc only 1 seed is available
+            args.steps = 150
         if enhanced_vid_mode and frame_idx > anim_args.coherence_switch_frame:
-            anim_args.color_coherence = "None"
+            pass
+            # anim_args.color_coherence = "None"
             # color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
         if enhanced_vid_mode and frame_idx == anim_args.seed_iter_frame + 24 * 10:
             # Slow things down when its probably not recongizable anyway
@@ -1732,16 +1734,13 @@ def render_animation(args, anim_args):
                 orig_frame = load_cv_img(args.init_image, (args.W, args.H), use_alpha_as_mask=args.use_alpha_as_mask)
                 orig_frame.save(os.path.join(args.outdir, filename))
             else:
-                # TODO this doesn't use ease_ratio
-
-                # img = sample_to_cv2(sample, type=np.float32)
-                # if strength > ease_start and enhanced_vid_mode:
-                #     # If strength is high, it means we are just starting diffusion frames, so we ease into it
-                #     # Might want to try before and after picking next image
-                #     ease_ratio = (strength - ease_start) / (1 - ease_start)
-                #     img = ease_ratio * vid_frame_cv + (1.0-ease_ratio) * img 
-                # cv2.imwrite(os.path.join(args.outdir, filename), cv2.cvtColor(img.astype(np.uint8), cv2.COLOR_RGB2BGR))
-                image.save(os.path.join(args.outdir, filename))
+                img = sample_to_cv2(sample, type=np.float32)
+                if strength > ease_start and enhanced_vid_mode:
+                    # If strength is high, it means we are just starting diffusion frames, so we ease into it
+                    # Might want to try before and after picking next image
+                    ease_ratio = (strength - ease_start) / (1 - ease_start)
+                    img = ease_ratio * vid_frame_cv + (1.0-ease_ratio) * img 
+                cv2.imwrite(os.path.join(args.outdir, filename), cv2.cvtColor(img.astype(np.uint8), cv2.COLOR_RGB2BGR))
             if anim_args.save_depth_maps:
                 if depth is None:
                     depth = depth_model.predict(sample_to_cv2(sample), anim_args)
