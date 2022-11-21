@@ -113,7 +113,7 @@ def DeforumAnimArgs():
     # TODO try should and long blend_build
     blend_build = 80 # 80
     blend_goal = "0.95"
-    strength_goal = "0.4" # .52
+    strength_goal = "0.6" # .52
     ease_start = 0.72
     noise_schedule = f"0: (0.02)" #@param {type:"string"}
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.001), {switch_frame+24*10}:(1.001), {switch_frame+24*20}:(0.985)" #@param {type:"string"}
@@ -176,7 +176,7 @@ def DeforumArgs():
     #@markdown **Sampling Settings**
     seed = -1 #@param
     sampler = 'klms' #@param ["klms","dpm2","dpm2_ancestral","heun","euler","euler_ancestral","plms", "ddim"]
-    steps = 100 #@param
+    steps = 150 #@param
     # !imp higher scale means more of an image change? or maybe the other way around
     scale = 7 #@param
     ddim_eta = 0.0 #@param
