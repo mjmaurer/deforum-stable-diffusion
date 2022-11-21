@@ -106,16 +106,16 @@ def DeforumAnimArgs():
     perspective_flip_phi = "0:(t%15)"#@param {type:"string"}
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
-    switch_frame = 25 * 24
-    strength_build = 350 # 150
+    switch_frame = 34 * 24
+    strength_build = 500 # 150
     # TODO try should and long blend_build
     blend_build = 80 # 100
     ease_start = 0.72
     noise_schedule = f"0: (0.02), {switch_frame - 1}:(0.02), {switch_frame}:(0.03)"#@param {type:"string"}
-    zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.005), {switch_frame+24*15}:(0.97)" #@param {type:"string"}
+    zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.002), {switch_frame+24*2}:(1.002), {switch_frame+24*15}:(0.97)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.4)" #@param {type:"string"}
-    strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: (0.52), {switch_frame + 200}: (0.58)" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
-    blend_schedule = f"0: (1), {switch_frame - blend_build}: (1), {switch_frame}: (0.95), {switch_frame + 1}: (0.05) "#@param {type:"string"}
+    strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: (0.52), {switch_frame + 200}: (0.6)" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
+    blend_schedule = f"0: (1), {switch_frame - blend_build}: (1), {switch_frame}: (0.95), {switch_frame + 1}: (0.025) "#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
     seed_iter_frame = switch_frame - 1
 
@@ -243,8 +243,8 @@ main_style = "high detail, oil painting, psychedelic, trippy, kilian eng"
 main_prompt = f"a web of tree branches and brown-orange leaves, {main_style}"
 animation_prompts = {
     0: main_prompt,
-    anim_args_dict["switch_frame"] + 24 * 6: f"a pile of brown-orange leaves, {main_style}",
-    anim_args_dict["switch_frame"] + 24 * 12: f"the gears of nature turning in a forest, {main_style}",
+    anim_args_dict["switch_frame"] + 24 * 20: f"a pile of brown-orange leaves and branches in the forest foilage, {main_style}",
+    anim_args_dict["switch_frame"] + 24 * 40: f"the gears of nature turning in a forest, {main_style}",
     # 20: "a beautiful banana, trending on Artstation",
     # 30: "a beautiful coconut, trending on Artstation",
     # 40: "a beautiful durian, trending on Artstation",
@@ -1625,7 +1625,7 @@ def render_animation(args, anim_args):
                         turbo_next_image = anim_frame_warp_3d(turbo_next_image, depth, anim_args, keys, tween_frame_idx)
                 turbo_prev_frame_idx = turbo_next_frame_idx = tween_frame_idx
 
-                if turbo_prev_image is not None and tween < 1.0: # and not use_same_frame:
+                if turbo_prev_image is not None and tween < 1.0 and not use_same_frame:
                     img = turbo_prev_image*(1.0-tween) + turbo_next_image*tween
                 else:
                     img = turbo_next_image
