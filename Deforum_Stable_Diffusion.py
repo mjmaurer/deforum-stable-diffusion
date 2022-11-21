@@ -106,8 +106,8 @@ def DeforumAnimArgs():
     perspective_flip_phi = "0:(t%15)"#@param {type:"string"}
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
-    switch_frame = 3 * 24 # 34
-    coherence_switch_frame = switch_frame + 1 * 24
+    switch_frame = 5 * 24 # 34
+    coherence_switch_frame = 0 # switch_frame + 1 * 24
     strength_build = 100 # 500
     # TODO try should and long blend_build
     blend_build = 80
@@ -241,7 +241,7 @@ anim_args_dict = DeforumAnimArgs()
 # wallpaper, poster, sharp focus, hyperrealism, insanely detailed, lush detail, filigree, intricate, crystalline, perfectionism, max detail, 4k uhd, spirals, tendrils, ornate, HQ, angelic, decorations, embellishments, masterpiece, hard edge, breathtaking, embroidery
 # collage?
 main_style = "vibrant, oil painting, lush detail, psychedelic, trippy, kilian eng"
-main_prompt = f"a web of tree branches and green leaves, {main_style}"
+main_prompt = f"a web of tree branches and orange leaves in fall foilage, {main_style}"
 animation_prompts = {
     0: main_prompt,
     anim_args_dict["switch_frame"] + 24 * 20: f"a pile of orange autumn leaves and branches in the forest foilage, {main_style}",
@@ -1707,6 +1707,13 @@ def render_animation(args, anim_args):
         if not use_same_frame: 
             sample, image = generate(args, frame_idx, return_latent=False, return_sample=True)
         if not using_vid_init or enhanced_vid_mode:
+            # img = sample_to_cv2(sample)
+            # if strength > ease_start and enhanced_vid_mode:
+            #     # If strength is high, it means we are just starting diffusion frames, so we ease into it
+            #     # Might want to try before and after picking next image
+            #     ease_ratio = (strength - ease_start) / (1 - ease_start)
+            #     img = ease_ratio * vid_frame_cv + (1.0-ease_ratio) * img 
+            # prev_sample = sample_from_cv2(img)
             prev_sample = sample
 
         if turbo_steps > 1:
