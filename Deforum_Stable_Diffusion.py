@@ -106,8 +106,8 @@ def DeforumAnimArgs():
     perspective_flip_phi = "0:(t%15)"#@param {type:"string"}
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
-    switch_frame = 30 * 24
-    strength_build = 276 # 150
+    switch_frame = 11 * 24
+    strength_build = 220 # 150
     # TODO try should and long blend_build
     blend_build = 80 # 100
     noise_schedule = f"0: (0.02), {switch_frame - 1}:(0.02), {switch_frame}:(0.03)"#@param {type:"string"}
