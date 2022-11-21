@@ -112,8 +112,8 @@ def DeforumAnimArgs():
     blend_build = 80 # 100
     ease_start = 0.72
     noise_schedule = f"0: (0.02), {switch_frame - 1}:(0.02), {switch_frame}:(0.03)"#@param {type:"string"}
-    zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.002), {switch_frame+24*2}:(1.002), {switch_frame+24*15}:(0.97)" #@param {type:"string"}
-    angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.4)" #@param {type:"string"}
+    zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.002), {switch_frame+24*10}:(1.002), {switch_frame+24*20}:(0.985)" #@param {type:"string"}
+    angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.4), {switch_frame+24*10}:(0.4), {switch_frame+24*20}:(-0.4)" #@param {type:"string"}
     strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: (0.52), {switch_frame + 200}: (0.6)" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
     blend_schedule = f"0: (1), {switch_frame - blend_build}: (1), {switch_frame}: (0.95), {switch_frame + 1}: (0.025) "#@param {type:"string"}
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
@@ -1776,6 +1776,30 @@ def render_input_video(args, anim_args):
     args.use_init = True
     print(f"Loading {anim_args.max_frames} input frames from {video_in_frame_path} and saving video frames to {args.outdir}")
 
+
+    image_path = os.path.join(args.outdir, f"{args.timestring}_%05d.png")
+    mp4_path = os.path.join(args.outdir, f"00_{args.timestring}.mp4")
+    max_frames = str(anim_args.max_frames)
+    cmd = [
+        'ffmpeg',
+        '-y',
+        '-vcodec', 'png',
+        '-r', str(fps),
+        '-start_number', str(0),
+        '-i', image_path,
+        '-frames:v', max_frames,
+        '-c:v', 'libx264',
+        '-vf',
+        f'fps={fps}',
+        '-pix_fmt', 'yuv420p',
+        '-crf', '17',
+        '-preset', 'veryslow',
+        '-pattern_type', 'sequence',
+        mp4_path
+    ]
+    anim_args.ffmpeg_cmd = " ".join(cmd)
+
+
     if anim_args.use_mask_video:
         # create a folder for the mask video input frames to live in
         mask_in_frame_path = os.path.join(args.outdir, 'maskframes') 
@@ -1936,28 +1960,6 @@ elif anim_args.animation_mode == 'Video Input':
 gc.collect()
 torch.cuda.empty_cache()
 
-
-image_path = os.path.join(args.outdir, f"{args.timestring}_%05d.png")
-mp4_path = os.path.join(args.outdir, f"00_{args.timestring}.mp4")
-max_frames = str(anim_args.max_frames)
-cmd = [
-    'ffmpeg',
-    '-y',
-    '-vcodec', 'png',
-    '-r', str(fps),
-    '-start_number', str(0),
-    '-i', image_path,
-    '-frames:v', max_frames,
-    '-c:v', 'libx264',
-    '-vf',
-    f'fps={fps}',
-    '-pix_fmt', 'yuv420p',
-    '-crf', '17',
-    '-preset', 'veryslow',
-    '-pattern_type', 'sequence',
-    mp4_path
-]
-anim_args.ffmpeg_cmd = " ".join(cmd)
 
 # dispatch to appropriate renderer
 if anim_args.animation_mode == '2D' or anim_args.animation_mode == '3D':
