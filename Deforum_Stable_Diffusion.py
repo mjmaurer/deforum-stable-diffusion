@@ -106,7 +106,7 @@ def DeforumAnimArgs():
     perspective_flip_phi = "0:(t%15)"#@param {type:"string"}
     perspective_flip_gamma = "0:(0)"#@param {type:"string"}
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
-    switch_frame = 5 * 24 # 34
+    switch_frame = 3 * 24 # 34
     coherence_switch_frame = switch_frame + 1 * 24
     strength_build = 100 # 500
     # TODO try should and long blend_build
@@ -241,7 +241,7 @@ anim_args_dict = DeforumAnimArgs()
 # wallpaper, poster, sharp focus, hyperrealism, insanely detailed, lush detail, filigree, intricate, crystalline, perfectionism, max detail, 4k uhd, spirals, tendrils, ornate, HQ, angelic, decorations, embellishments, masterpiece, hard edge, breathtaking, embroidery
 # collage?
 main_style = "vibrant, oil painting, lush detail, psychedelic, trippy, kilian eng"
-main_prompt = f"a web of tree branches and orange leaves in fall foilage, {main_style}"
+main_prompt = f"a web of tree branches and green leaves, {main_style}"
 animation_prompts = {
     0: main_prompt,
     anim_args_dict["switch_frame"] + 24 * 20: f"a pile of orange autumn leaves and branches in the forest foilage, {main_style}",
