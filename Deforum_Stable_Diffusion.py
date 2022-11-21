@@ -5,7 +5,7 @@ ENV = os.environ
 
 vid_strength = float(ENV.get("STRENGTH", 1))
 video_file_name = ENV.get("VID_FILE", "19testvid.mp4")
-vid_prompt = ENV.get("VID_PROMPT", "a pile of tree branches and dark orange leaves in forest foilage, high detail, trippy, psychedelic")
+vid_prompt = ENV.get("VID_PROMPT", "a pile of orange-brown tree branches and leaves in forest foilage, high detail, trippy, psychedelic")
 enhanced_vid_mode = ENV.get("VID_MODE_OFF", True)
 # Set to overwrite video inputframes if they already exist
 rewrite_video_frames = ENV.get("REWRITE_VIDEO_FRAMES", False)
