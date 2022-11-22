@@ -122,7 +122,7 @@ def DeforumAnimArgs():
     blend_goal = "0.95"
     strength_goal = "0.6" # .52
     ease_start = 0.72
-    frame_step_schedule = f"0: (0), {switch_frame}: (6.25)" #@param {type:"string"}
+    frame_step_schedule = f"0: (0), 200: (0), {switch_frame}: (7.25)" #@param {type:"string"}
     noise_schedule = f"0: (0.02), {switch_frame - 48}: (0.02), {switch_frame + 1}: (0.12)" #@param {type:"string"}
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.001), {switch_frame+24*10}:(1.001), {switch_frame+24*20}:(0.985)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.4), {switch_frame+24*10}:(0.4), {switch_frame+24*20}:(-0.4)" #@param {type:"string"}
