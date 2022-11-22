@@ -121,7 +121,7 @@ def DeforumAnimArgs():
     blend_build = 70 # 80
     blend_goal = "0.95"
     strength_goal = "0.4" # .52
-    angle_goal = "3.2"
+    angle_goal = ".1"
     ease_start = 0.72
     frame_step_schedule = f"0: (0), 200: (0), {switch_frame}: (7.25)" #@param {type:"string"}
     noise_schedule = f"0: (0.02), {switch_frame - 48}: (0.02), {switch_frame + 1}: (0.12)" #@param {type:"string"}
@@ -1613,6 +1613,21 @@ def render_animation(args, anim_args):
 
         use_same_frame = enhanced_vid_mode and frame_idx < anim_args.seed_iter_frame and blend > 0.9999 and strength > 0.9999
 
+        if enhanced_vid_mode and anim_args.slow_down:
+            # turbo_steps == 2 means 2x slowdown
+            turbo_steps = 1 # Regular
+            if frame_step < 1: 
+                t_base = math.floor(1.0 / frame_step)
+                t_every =  math.floor(1 / ((1 / frame_step) - t_base))
+                turbo_steps = t_base + 1
+                if frame_idx % t_every == 0:
+                    turbo_steps += 1
+            else: # < 2x slowdown 
+                if frame_idx % math.floor(frame_step) == 0:
+                    turbo_steps += 1
+        elif enhanced_vid_mode and frame_idx > anim_args.seed_iter_frame:
+            turbo_steps = 8
+
         # emit in-between frames
         # turbo_steps = 1 for vid input 
         if turbo_steps > 1:
@@ -1703,15 +1718,10 @@ def render_animation(args, anim_args):
         if enhanced_vid_mode and frame_idx > anim_args.seed_iter_frame and anim_args.switch_on:
             args.seed_behavior = 'iter' # force fix seed at the moment bc only 1 seed is available
             args.steps = 150
-            turbo_steps = 8
         if enhanced_vid_mode and frame_idx > anim_args.coherence_switch_frame:
             pass
             # anim_args.color_coherence = "None"
             # color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
-        if enhanced_vid_mode and anim_args.slow_down:
-            # turbo_steps == 2 means 2x slowdown
-            turbo_steps = 1 # Regular
-            turbo_steps += math.floor(frame_step)
 
         # grab prompt for current frame
         args.prompt = prompt_series[frame_idx]
