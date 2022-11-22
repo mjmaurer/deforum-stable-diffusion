@@ -1,4 +1,5 @@
 import os
+import math
 
 from keyframes import Keyframe, Scene
 ENV = os.environ
@@ -110,7 +111,8 @@ def DeforumAnimArgs():
     switch_frame = 34 * 24 # 34
     switch_duration = 24 * 4
     switch_blend_goal = "0"
-    if False: # Set true for original blend behavior
+    slow_down = True
+    if True: # Set true for original blend behavior
         switch_blend_goal = "0"
         switch_duration = 0
     coherence_switch_frame = 0 # switch_frame + 1 * 24
@@ -120,6 +122,7 @@ def DeforumAnimArgs():
     blend_goal = "0.95"
     strength_goal = "0.6" # .52
     ease_start = 0.72
+    frame_step_schedule = f"0: (24), {switch_frame}: (.125)" #@param {type:"string"}
     noise_schedule = f"0: (0.02), {switch_frame - 48}: (0.02), {switch_frame + 1}: (0.12)" #@param {type:"string"}
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.001), {switch_frame+24*10}:(1.001), {switch_frame+24*20}:(0.985)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.4), {switch_frame+24*10}:(0.4), {switch_frame+24*20}:(-0.4)" #@param {type:"string"}
@@ -184,7 +187,7 @@ def DeforumArgs():
     #@markdown **Sampling Settings**
     seed = -1 #@param
     sampler = 'klms' #@param ["klms","dpm2","dpm2_ancestral","heun","euler","euler_ancestral","plms", "ddim"]
-    steps = 150 #@param
+    steps = 125 #@param
     # !imp higher scale means more of an image change? or maybe the other way around
     scale = 7 #@param
     ddim_eta = 0.0 #@param
@@ -1316,6 +1319,7 @@ class DeformAnimKeys():
         self.strength_schedule_series = get_inbetweens(parse_key_frames(anim_args.strength_schedule), anim_args.max_frames)
         self.contrast_schedule_series = get_inbetweens(parse_key_frames(anim_args.contrast_schedule), anim_args.max_frames)
         self.blend_schedule_series = get_inbetweens(parse_key_frames(anim_args.blend_schedule), anim_args.max_frames)
+        self.frame_step_schedule_series = get_inbetweens(parse_key_frames(anim_args.frame_step_schedule), anim_args.max_frames)
 
 
 def get_inbetweens(key_frames, max_frames, integer=False, interp_method='Linear'):
@@ -1584,6 +1588,7 @@ def render_animation(args, anim_args):
         strength = keys.strength_schedule_series[frame_idx]
         contrast = keys.contrast_schedule_series[frame_idx]
         blend = keys.blend_schedule_series[frame_idx]
+        frame_step: float = keys.frame_step_schedule_series[frame_idx]
         depth = None
 
         # grab init image for current frame
@@ -1701,18 +1706,25 @@ def render_animation(args, anim_args):
             pass
             # anim_args.color_coherence = "None"
             # color_coherence = 'Match Frame 0 LAB' #@param ['None', 'Match Frame 0 HSV', 'Match Frame 0 LAB', 'Match Frame 0 RGB'] {type:'string'}
-        if enhanced_vid_mode and frame_idx == anim_args.seed_iter_frame + 24 * 10:
-            # Slow things down when its probably not recongizable anyway
-            # turbo_steps += 1
-            pass
-
+        if enhanced_vid_mode and anim_args.slow_down:
+            # turbo_steps == 2 means 2x slowdown
+            turbo_steps = 1 # Regular
+            if frame_step < 1: 
+                t_base = math.floor(1.0 / frame_step)
+                t_every =  math.floor(1 / ((1 / frame_step) - t_base))
+                turbo_steps = t_base + 1
+                if frame_idx % t_every == 0:
+                    turbo_steps += 1
+            else: # < 2x slowdown 
+                if frame_idx % math.floor(frame_step) == 0:
+                    turbo_steps += 1
 
         # grab prompt for current frame
         args.prompt = prompt_series[frame_idx]
         print(f"{args.prompt} {args.seed}")
         if not using_vid_init or enhanced_vid_mode:
             print(f"Strength: {args.strength}. Blend: {blend}")
-            print(f"Angle: {keys.angle_series[frame_idx]} Zoom: {keys.zoom_series[frame_idx]}")
+            print(f"Turbo steps: {turbo_steps} Frame Step: {frame_step} Angle: {keys.angle_series[frame_idx]} Zoom: {keys.zoom_series[frame_idx]}")
             print(f"Tx: {keys.translation_x_series[frame_idx]} Ty: {keys.translation_y_series[frame_idx]} Tz: {keys.translation_z_series[frame_idx]}")
             print(f"Rx: {keys.rotation_3d_x_series[frame_idx]} Ry: {keys.rotation_3d_y_series[frame_idx]} Rz: {keys.rotation_3d_z_series[frame_idx]}")
 
