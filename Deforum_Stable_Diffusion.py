@@ -1809,7 +1809,7 @@ def render_input_video(args, anim_args):
         vid2frames(anim_args.video_init_path, video_in_frame_path, anim_args.extract_nth_frame, anim_args.overwrite_extracted_frames)
 
     # determine max frames from length of input frames
-    anim_args.max_frames = len([f for f in pathlib.Path(video_in_frame_path).glob('*.jpg')]) * int(anim_args.diffusion_cadence)
+    anim_args.max_frames = len([f for f in pathlib.Path(video_in_frame_path).glob('*.jpg')]) * 5 
     args.use_init = True
     print(f"Loading {anim_args.max_frames} input frames from {video_in_frame_path} and saving video frames to {args.outdir}")
 
