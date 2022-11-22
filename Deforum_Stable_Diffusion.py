@@ -121,11 +121,12 @@ def DeforumAnimArgs():
     blend_build = 70 # 80
     blend_goal = "0.95"
     strength_goal = "0.4" # .52
+    angle_goal = "2.4"
     ease_start = 0.72
     frame_step_schedule = f"0: (0), 200: (0), {switch_frame}: (7.25)" #@param {type:"string"}
     noise_schedule = f"0: (0.02), {switch_frame - 48}: (0.02), {switch_frame + 1}: (0.12)" #@param {type:"string"}
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.001), {switch_frame+24*10}:(1.001), {switch_frame+24*20}:(0.985)" #@param {type:"string"}
-    angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.4), {switch_frame+24*10}:(0.4), {switch_frame+24*20}:(-0.4)" #@param {type:"string"}
+    angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:({angle_goal}), {switch_frame+24*10}:({angle_goal}), {switch_frame+24*20}:(-0.4)" #@param {type:"string"}
     strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: ({strength_goal}), {switch_frame + 200}: ({strength_goal})" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
     blend_schedule = (
         f"0: (1), {switch_frame - blend_build}: (1), {switch_frame}: ({blend_goal}), "
@@ -254,8 +255,8 @@ anim_args_dict = DeforumAnimArgs()
 
 # wallpaper, poster, sharp focus, hyperrealism, insanely detailed, lush detail, filigree, intricate, crystalline, perfectionism, max detail, 4k uhd, spirals, tendrils, ornate, HQ, angelic, decorations, embellishments, masterpiece, hard edge, breathtaking, embroidery
 # collage?
-main_style = "vibrant, psychedelic, oil painting, lush detail, trippy, kilian eng"
-main_prompt = f"triangle tesselation with tree branches, {main_style}"
+main_style = "vibrant, octane render, trippy"
+main_prompt = f"eyes inside a psychedelic forest, {main_style}"
 # main_prompt = f"green forest and trees, {main_style}"
 animation_prompts = {
     0: main_prompt,
@@ -1702,6 +1703,7 @@ def render_animation(args, anim_args):
         if enhanced_vid_mode and frame_idx > anim_args.seed_iter_frame and anim_args.switch_on:
             args.seed_behavior = 'iter' # force fix seed at the moment bc only 1 seed is available
             args.steps = 150
+            turbo_steps = 8
         if enhanced_vid_mode and frame_idx > anim_args.coherence_switch_frame:
             pass
             # anim_args.color_coherence = "None"
