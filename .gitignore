@@ -10,3 +10,4 @@ outputs
 cc-outputs.log
 
 .venv
+stablewarp.py

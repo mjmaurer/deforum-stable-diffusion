@@ -122,7 +122,7 @@ def DeforumAnimArgs():
     blend_goal = "0.95"
     strength_goal = "0.6" # .52
     ease_start = 0.72
-    frame_step_schedule = f"0: (24), {switch_frame}: (.125)" #@param {type:"string"}
+    frame_step_schedule = f"0: (0), {switch_frame}: (6.25)" #@param {type:"string"}
     noise_schedule = f"0: (0.02), {switch_frame - 48}: (0.02), {switch_frame + 1}: (0.12)" #@param {type:"string"}
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.001), {switch_frame+24*10}:(1.001), {switch_frame+24*20}:(0.985)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.4), {switch_frame+24*10}:(0.4), {switch_frame+24*20}:(-0.4)" #@param {type:"string"}
@@ -254,8 +254,8 @@ anim_args_dict = DeforumAnimArgs()
 
 # wallpaper, poster, sharp focus, hyperrealism, insanely detailed, lush detail, filigree, intricate, crystalline, perfectionism, max detail, 4k uhd, spirals, tendrils, ornate, HQ, angelic, decorations, embellishments, masterpiece, hard edge, breathtaking, embroidery
 # collage?
-main_style = "vibrant, oil painting, lush detail, trippy, kilian eng"
-main_prompt = f"a web of tree branches and orange leaves in fall foilage, {main_style}"
+main_style = "vibrant, psychedelic, oil painting, lush detail, trippy, kilian eng"
+main_prompt = f"triangle tesselation with tree branches, {main_style}"
 # main_prompt = f"green forest and trees, {main_style}"
 animation_prompts = {
     0: main_prompt,
@@ -1709,15 +1709,7 @@ def render_animation(args, anim_args):
         if enhanced_vid_mode and anim_args.slow_down:
             # turbo_steps == 2 means 2x slowdown
             turbo_steps = 1 # Regular
-            if frame_step < 1: 
-                t_base = math.floor(1.0 / frame_step)
-                t_every =  math.floor(1 / ((1 / frame_step) - t_base))
-                turbo_steps = t_base + 1
-                if frame_idx % t_every == 0:
-                    turbo_steps += 1
-            else: # < 2x slowdown 
-                if frame_idx % math.floor(frame_step) == 0:
-                    turbo_steps += 1
+            turbo_steps += math.floor(frame_step)
 
         # grab prompt for current frame
         args.prompt = prompt_series[frame_idx]
