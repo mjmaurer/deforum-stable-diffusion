@@ -108,6 +108,11 @@ def DeforumAnimArgs():
     perspective_flip_fv = "0:(53)"#@param {type:"string"}
     switch_on = True
     switch_frame = 34 * 24 # 34
+    switch_duration = 24 * 4
+    switch_blend_goal = "0"
+    if False: # Set true for original blend behavior
+        switch_blend_goal = "0"
+        switch_duration = 0
     coherence_switch_frame = 0 # switch_frame + 1 * 24
     strength_build = 350 # 500
     # TODO try should and long blend_build
@@ -115,11 +120,14 @@ def DeforumAnimArgs():
     blend_goal = "0.95"
     strength_goal = "0.6" # .52
     ease_start = 0.72
-    noise_schedule = f"0: (0.02), {switch_frame}: (0.02), {switch_frame + 1}: (0.08)" #@param {type:"string"}
+    noise_schedule = f"0: (0.02), {switch_frame - 48}: (0.02), {switch_frame + 1}: (0.1)" #@param {type:"string"}
     zoom = f"0:(1), {switch_frame - 1}:(1), {switch_frame}:(1.001), {switch_frame+24*10}:(1.001), {switch_frame+24*20}:(0.985)" #@param {type:"string"}
     angle = f"0:(0), {switch_frame - 2}:(0), {switch_frame - 1}:(0.4), {switch_frame+24*10}:(0.4), {switch_frame+24*20}:(-0.4)" #@param {type:"string"}
     strength_schedule = f"0: (1), {switch_frame - strength_build}: (1), {switch_frame}: ({strength_goal}), {switch_frame + 200}: ({strength_goal})" # {switch_frame}: (0.7), {switch_frame + 200}: (0.55)" #@param {type:"string"}
-    blend_schedule = f"0: (1), {switch_frame - blend_build}: (1), {switch_frame}: ({blend_goal}), {switch_frame + 1}: ({'0' if switch_on else blend_goal}) "#@param {type:"string"}
+    blend_schedule = (
+        f"0: (1), {switch_frame - blend_build}: (1), {switch_frame}: ({blend_goal}), "
+        f"{switch_frame + 1 + switch_duration}: ({switch_blend_goal if switch_on else blend_goal}) "
+    )
     contrast_schedule = "0: (1.0)"#@param {type:"string"}
     seed_iter_frame = switch_frame - 1
 
